@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DUAVA PRISMA - Dos tiendas, una experiencia inteligente" />
+  <meta name="theme-color" content="#2D6A4F" />
+  <title>DUAVA PRISMA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #F5F5F5; color: #1A1A1A; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    :root { --bg: #F5F5F5; --surface: #FFFFFF; --text: #1A1A1A; --text-2: #666666; --accent: #2D6A4F; --accent-light: #E8F5E9; --border: #E0E0E0; --shadow: 0 2px 12px rgba(0,0,0,0.06); --shadow-lg: 0 8px 32px rgba(0,0,0,0.10); --wa: #25D366; --wa-dark: #128C7E; --radius: 16px; }
+    .loader-wrap { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity .4s ease, visibility .4s ease; }
+    .loader-wrap.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-pulse { width: 56px; height: 56px; border: 4px solid var(--accent-light); border-top-color: var(--accent); border-radius: 50%; animation: spin .9s linear infinite; }
+    .loader-text { margin-top: 20px; font-size: 14px; color: var(--text-2); font-weight: 500; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 14px 20px; transition: box-shadow .3s ease; }
+    .header.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .header-logo { display: flex; flex-direction: column; gap: 1px; }
+    .header-logo h1 { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; line-height: 1.2; }
+    .header-logo p { font-size: 11px; color: var(--text-2); font-weight: 500; }
+    .header-badge { display: flex; gap: 6px; flex-shrink: 0; }
+    .badge { font-size: 10px; font-weight: 600; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+    .badge-odonto { background: var(--accent-light); color: var(--accent); }
+    .badge-celeb { background: #FFF3E0; color: #E65100; }
+    .search-wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px 8px; }
+    .search-box { position: relative; max-width: 640px; }
+    .search-box svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--text-2); pointer-events: none; }
+    .search-box input { width: 100%; height: 48px; padding: 0 16px 0 46px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); font-family: inherit; font-size: 15px; color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; }
+    .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,106,79,0.12); }
+    .search-box input::placeholder { color: #AAAAAA; }
+    .filter-wrap { max-width: 1200px; margin: 0 auto; padding: 8px 20px 12px; }
+    .filter-list { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .filter-list::-webkit-scrollbar { display: none; }
+    .filter-btn { flex-shrink: 0; padding: 8px 20px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; transition: all .2s ease; user-select: none; }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .stats-wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px 12px; }
+    .stats-bar { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat-chip { font-size: 12px; font-weight: 500; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 999px; }
+    .stat-chip b { color: var(--accent); }
+    .grid-wrap { max-width: 1200px; margin: 0 auto; padding: 8px 20px 40px; }
+    .product-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+    @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+    .product-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; transition: transform .3s ease, box-shadow .3s ease; animation: cardIn .45s ease both; opacity: 0; }
+    .product-card:nth-child(1) { animation-delay: 0ms; } .product-card:nth-child(2) { animation-delay: 50ms; } .product-card:nth-child(3) { animation-delay: 100ms; } .product-card:nth-child(4) { animation-delay: 150ms; } .product-card:nth-child(5) { animation-delay: 200ms; } .product-card:nth-child(6) { animation-delay: 250ms; } .product-card:nth-child(7) { animation-delay: 300ms; } .product-card:nth-child(8) { animation-delay: 350ms; } .product-card:nth-child(9) { animation-delay: 400ms; } .product-card:nth-child(10) { animation-delay: 450ms; } .product-card:nth-child(11) { animation-delay: 500ms; } .product-card:nth-child(12) { animation-delay: 550ms; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .card-img-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%); flex-shrink: 0; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+    .product-card:hover .card-img-wrap img { transform: scale(1.05); }
+    .card-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #BBBBBB; }
+    .card-placeholder svg { width: 56px; height: 56px; opacity: 0.5; }
+    .card-placeholder span { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+    .card-store-badge { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 700; padding: 5px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2; }
+    .card-store-badge.odonto { background: var(--accent); color: #fff; }
+    .card-store-badge.celebraciones { background: #E65100; color: #fff; }
+    .card-body { padding: 16px; display: flex; flex-direction: column; flex: 1; gap: 8px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 18px; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 4px; flex-wrap: wrap; }
+    .card-price { font-size: 18px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .card-price::before { content: '$'; } .card-price::after { content: ' USD'; font-size: 12px; font-weight: 500; opacity: 0.7; }
+    .card-stock { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+    .card-stock.in-stock { background: var(--accent-light); color: var(--accent); }
+    .card-stock.out-stock { background: #FFF8E1; color: #F57F17; }
+    .wa-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: none; border-radius: 12px; background: var(--wa); color: #fff; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all .2s ease; margin-top: 6px; }
+    .wa-btn:hover { background: var(--wa-dark); transform: scale(1.02); } .wa-btn:active { transform: scale(0.98); } .wa-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-2); }
+    .empty-state svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 14px; }
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--wa); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.4); z-index: 200; cursor: pointer; border: none; text-decoration: none; transition: transform .2s ease; animation: fabIn .5s ease .8s both, pulse 3s ease-in-out 2s infinite; }
+    .fab:hover { transform: scale(1.08); } .fab:active { transform: scale(0.95); } .fab svg { width: 28px; height: 28px; }
+    @keyframes fabIn { from { opacity: 0; transform: translateY(20px) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.4); } 50% { box-shadow: 0 4px 32px rgba(37,211,102,0.6); } }
+    .footer { background: var(--surface); border-top: 1px solid var(--border); padding: 32px 20px; text-align: center; }
+    .footer h2 { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    .footer p { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+    @media (max-width: 480px) { .header-inner { flex-direction: column; align-items: flex-start; gap: 8px; } .header-badge { align-self: flex-start; } .card-img-wrap { height: 180px; } .fab { width: 52px; height: 52px; bottom: 16px; right: 16px; } }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 999px; } ::-webkit-scrollbar-thumb:hover { background: #AAAAAA; }
+  </style>
+</head>
+<body>
+  <div class="loader-wrap" id="loader"><div class="loader-pulse"></div><div class="loader-text">Cargando productos...</div></div>
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="header-logo"><h1>DUAVA PRISMA</h1><p>Dos tiendas, una experiencia inteligente</p></div>
+      <div class="header-badge"><span class="badge badge-odonto">OdontoStore</span><span class="badge badge-celeb">Celebraciones</span></div>
+    </div>
+  </header>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar productos..." autocomplete="off" />
+    </div>
+  </div>
+  <div class="filter-wrap">
+    <div class="filter-list" id="filterList">
+      <button class="filter-btn active" data-filter="todos">Todos</button>
+      <button class="filter-btn" data-filter="OdontoStore">OdontoStore</button>
+      <button class="filter-btn" data-filter="Celebraciones">Celebraciones</button>
+    </div>
+  </div>
+  <div class="stats-wrap">
+    <div class="stats-bar">
+      <span class="stat-chip">Total: <b id="statTotal">0</b></span>
+      <span class="stat-chip">OdontoStore: <b id="statOdonto">0</b></span>
+      <span class="stat-chip">Celebraciones: <b id="statCeleb">0</b></span>
+    </div>
+  </div>
+  <div class="grid-wrap"><div class="product-grid" id="productGrid"></div></div>
+  <footer class="footer"><h2>DUAVA PRISMA</h2><p>Atencion rapida por WhatsApp<br>Productos actualizados constantemente</p></footer>
+  <a class="fab" id="fab" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+  <script>
+    const SHEET_ID='10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU', SHEET_GID='2056025511', CORS_PROXY='https://corsproxy.io/?';
+    let allProducts=[], currentFilter='todos', searchTerm='';
+    const loader=document.getElementById('loader'), grid=document.getElementById('productGrid'), searchEl=document.getElementById('searchInput'), filterBtns=document.querySelectorAll('.filter-btn'), header=document.getElementById('header'), statTotal=document.getElementById('statTotal'), statOdonto=document.getElementById('statOdonto'), statCeleb=document.getElementById('statCeleb');
+
+    function parseCSV(t){const l=t.trim().split('\n');if(l.length<2)return[];const h=l[0].split(',').map(x=>x.trim()), r=[];for(let i=1;i<l.length;i++){const v=parseLine(l[i]);if(v.length<4)continue;const p={};h.forEach((k,j)=>p[k]=(v[j]||'').trim());if((p.VisibleWeb||'').toUpperCase()&&p.VisibleWeb.toUpperCase()!=='SI')continue;r.push({Producto:p.Producto||'',Precio:parseFloat(p.Precio)||0,Stock:p.Stock===''?'':parseInt(p.Stock,10),Tienda:(p.Tienda||'').trim(),Fecha_Alta:p.Fecha_Alta||'',Nota_Alta:p.Nota_Alta||'',Descripcion:p.Descripcion||'',OrdenWeb:parseInt(p.OrdenWeb,10)||999,FotoURL:p.FotoURL||''})}return r.sort((a,b)=>a.OrdenWeb-b.OrdenWeb)}
+    function parseLine(s){const r=[];let c='',q=0;for(let i=0;i<s.length;i++){const ch=s[i];if(ch==='"')q=!q;else if(ch===','&&!q){r.push(c);c=''}else c+=ch}r.push(c);return r}
+
+    async function loadProducts(){try{const u=`${CORS_PROXY}https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);allProducts=parseCSV(await r.text())}catch(e){console.warn('Fetch failed, using fallback',e);allProducts=getFallback()}updateStats();render();loader.classList.add('done')}
+
+    function getFallback(){return [{"Producto":"Resina Fill magic","Precio":8,"Stock":0,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Papel Koreano","Precio":2,"Stock":15,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Orthobond PLUS","Precio":32,"Stock":0,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Ortho Fill magic brackets","Precio":18,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Adhesivo Bond Rojo","Precio":12,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Brackets chinos","Precio":5,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Goma Eva","Precio":0.10,"Stock":25,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Goma Eva brillo","Precio":0.13,"Stock":25,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Papel koreano","Precio":0.16,"Stock":10,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Papel arroz","Precio":0.13,"Stock":25,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Paquetes de globos amor","Precio":0.13,"Stock":50,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Barras de silicona","Precio":6,"Stock":1,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Tijera de diseno chica","Precio":0.51,"Stock":1,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Tijera de diseno grande","Precio":6.51,"Stock":1,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Cintas de colores","Precio":1.61,"Stock":6,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Cajas de carton","Precio":0.21,"Stock":12,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Limpia pipas","Precio":1,"Stock":3,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Cinta adhesiva","Precio":1.61,"Stock":7,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Cinta adhesiva chica","Precio":0.14,"Stock":0,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Mariposas","Precio":1,"Stock":1,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Corazoncitos","Precio":0.51,"Stock":2,"Tienda":"CELEBRACIONES","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Llis kit","Precio":55,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Llis EA1","Precio":9,"Stock":6,"Tienda":"ODONTO STORE","Nota_Alta":"Si llevan 2 unidades a 8","Descripcion":"","FotoURL":""},{"Producto":"Resina Llis EA2","Precio":9,"Stock":5,"Tienda":"ODONTO STORE","Nota_Alta":"Si llevan 2 unidades a 8","Descripcion":"","FotoURL":""},{"Producto":"Resina Llis EA3","Precio":9,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Forma Transparente","Precio":25,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"Encargo","Descripcion":"","FotoURL":""},{"Producto":"Resina Forma Incisal","Precio":25,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"Encargo","Descripcion":"","FotoURL":""},{"Producto":"Resina Forma Opaco","Precio":25,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"Encargo","Descripcion":"","FotoURL":""},{"Producto":"Resina Vittra EA2","Precio":30,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"Encargo","Descripcion":"","FotoURL":""},{"Producto":"Resina Vittra DA2","Precio":30,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"Encargo","Descripcion":"","FotoURL":""},{"Producto":"Kit de resina Llis","Precio":55,"Stock":3,"Tienda":"ODONTO STORE","Nota_Alta":"Ultimo stock","Descripcion":"","FotoURL":""},{"Producto":"Resina Llis DA1","Precio":9,"Stock":2,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Blanqueador Whiteness HP MAX","Precio":60,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Adhesivo Ambar universal","Precio":37,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""},{"Producto":"Resina Forma cuerpo BL1","Precio":25,"Stock":1,"Tienda":"ODONTO STORE","Nota_Alta":"","Descripcion":"","FotoURL":""}]}
+
+    function updateStats(){statTotal.textContent=allProducts.length;statOdonto.textContent=allProducts.filter(p=>p.Tienda.toUpperCase().includes('ODONTO')).length;statCeleb.textContent=allProducts.filter(p=>p.Tienda.toUpperCase().includes('CELEBRACIONES')).length}
+
+    function render(){const f=allProducts.filter(p=>{const ms=currentFilter==='todos'||(currentFilter==='OdontoStore'&&p.Tienda.toUpperCase().includes('ODONTO'))||(currentFilter==='Celebraciones'&&p.Tienda.toUpperCase().includes('CELEBRACIONES'));const msc=!searchTerm||p.Producto.toLowerCase().includes(searchTerm.toLowerCase())||(p.Descripcion&&p.Descripcion.toLowerCase().includes(searchTerm.toLowerCase()))||(p.Nota_Alta&&p.Nota_Alta.toLowerCase().includes(searchTerm.toLowerCase()));return ms&&msc});if(f.length===0){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><h3>No se encontraron productos</h3><p>Intenta con otra busqueda o filtro</p></div>';return}grid.innerHTML=f.map(p=>createCard(p)).join('')}
+    function createCard(p){const isOdonto=p.Tienda.toUpperCase().includes('ODONTO'), sc=isOdonto?'odonto':'celebraciones', sl=isOdonto?'OdontoStore':'Celebraciones', hs=p.Stock!==''&&p.Stock>0, sh=hs?`<span class="card-stock in-stock">Stock: ${p.Stock}</span>`:`<span class="card-stock out-stock">Consultar disponibilidad</span>`, d=p.Descripcion||p.Nota_Alta||'', ps=p.Precio.toFixed(p.Precio%1===0?0:2), ih=p.FotoURL?`<img src="${p.FotoURL}" alt="${p.Producto}" loading="lazy" onerror="this.style.display='none';this.parentNode.innerHTML=getPH('${sc}','${sl}');" />`:getPH(sc,sl), wl=`https://wa.me/5358386814?text=${encodeURIComponent('Hola, me interesa este producto: '+p.Producto)}`;return `<div class="product-card"><div class="card-img-wrap"><span class="card-store-badge ${sc}">${sl}</span>${ih}</div><div class="card-body"><h3 class="card-title">${p.Producto}</h3>${d?`<p class="card-desc">${d}</p>`:'<p class="card-desc"></p>'}<div class="card-meta"><span class="card-price">${ps}</span>${sh}</div><a class="wa-btn" href="${wl}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Comprar por WhatsApp</a></div></div>`}
+    function getPH(c,l){const io=c==='odonto';return `<div class="card-placeholder"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">${io?'<rect x="12" y="20" width="40" height="28" rx="4"/><path d="M20 20V14a12 12 0 0124 0v6"/><circle cx="32" cy="36" r="4"/><path d="M32 40v4"/>':'<circle cx="32" cy="24" r="10"/><path d="M16 52c0-8.837 7.163-16 16-16s16 7.163 16 16"/><path d="M28 16l4-4 4 4"/>'}</svg><span>${io?'OdontoStore':'Celebraciones'}</span></div>`}
+
+    let dt; searchEl.addEventListener('input',()=>{clearTimeout(dt);dt=setTimeout(()=>{searchTerm=searchEl.value;render()},200)});
+    filterBtns.forEach(b=>b.addEventListener('click',()=>{filterBtns.forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;render()}));
+    window.addEventListener('scroll',()=>{if(window.scrollY>50)header.classList.add('scrolled');else header.classList.remove('scrolled')});
+    loadProducts();
+  </script>
+</body>
+</html>
