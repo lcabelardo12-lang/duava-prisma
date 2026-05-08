@@ -119,64 +119,117 @@
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 999px; } ::-webkit-scrollbar-thumb:hover { background: #AAAAAA; }
   </style>
 </head>
+<script>
+function volverInicio(){
+var lp=document.getElementById('landingPage');
+if(lp){lp.style.display='block';lp.classList.remove('hide');window.scrollTo(0,0);}
+}
+</script>
+
 <body>
 <style>
-#landingPage{position:fixed;inset:0;z-index:10000;background:#F5F5F5;overflow-y:auto;transition:opacity .6s ease}
+#landingPage{position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow-y:auto;transition:opacity .8s ease}
 #landingPage.hide{opacity:0;pointer-events:none}
-.lp-hero{background:linear-gradient(160deg,#0d2818 0%,#1a4a35 40%,#2D6A4F 100%);color:#fff;padding:50px 24px 40px;text-align:center;position:relative;overflow:hidden;min-height:35vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.lp-hero::after{content:'';position:absolute;bottom:-20px;left:-5%;right:-5%;height:50px;background:#F5F5F5;border-radius:50%}
-.lp-hero h1{font-size:2.8rem;font-weight:800;letter-spacing:8px;line-height:1;margin-bottom:2px;animation:lpFade .6s ease both}
-.lp-hero h2{font-size:1.3rem;font-weight:300;letter-spacing:14px;opacity:.85;margin-bottom:14px;animation:lpFade .6s ease .1s both}
-.lp-hero>p{font-size:.95rem;opacity:.7;animation:lpFade .6s ease .2s both}
-.lp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px 20px 0}
-.lp-card{border-radius:16px;padding:24px 14px;text-align:center;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12);animation:lpUp .5s ease both}
-.lp-card:nth-child(2){animation-delay:.1s}
-.lp-card.od{background:linear-gradient(135deg,#2D6A4F,#1a4a35)}
-.lp-card.celeb{background:linear-gradient(135deg,#E65100,#BF360C)}
-.lp-card svg{width:44px;height:44px;margin-bottom:10px;opacity:.9}
-.lp-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
-.lp-card p{font-size:.78rem;opacity:.85;line-height:1.4}
-.lp-about{background:#fff;border-radius:16px;padding:22px;margin:20px 20px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #E0E0E0;animation:lpUp .5s ease .2s both}
-.lp-about h3{color:#2D6A4F;font-size:1.1rem;font-weight:700;margin-bottom:10px}
-.lp-about p{color:#666;font-size:.9rem;line-height:1.7}
-.lp-cta{display:block;width:calc(100% - 40px);margin:20px;padding:16px;background:linear-gradient(135deg,#2D6A4F,#1a4a35);color:#fff;border:none;border-radius:14px;font-size:1.1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(45,106,79,.3);transition:transform .2s;font-family:inherit;animation:lpUp .5s ease .3s both}
+
+.lp-hero{position:relative;min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 24px 60px;overflow:hidden}
+.lp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(45,106,79,.35) 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(230,81,0,.2) 0%,transparent 50%),linear-gradient(180deg,#0a0a0a 0%,#111 100%)}
+.lp-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:80px;background:linear-gradient(transparent,#0a0a0a)}
+.lp-hero-content{position:relative;z-index:2;text-align:center}
+.lp-hero-content .brand{font-size:.85rem;letter-spacing:12px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-bottom:16px;animation:lpFade .8s ease both}
+.lp-hero-content h1{font-size:3.4rem;font-weight:800;letter-spacing:6px;color:#fff;line-height:1;margin-bottom:4px;animation:lpFade .8s ease .15s both}
+.lp-hero-content h2{font-size:1.1rem;font-weight:300;letter-spacing:16px;color:rgba(255,255,255,.5);margin-bottom:20px;animation:lpFade .8s ease .3s both}
+.lp-hero-content .tagline{font-size:.9rem;color:rgba(255,255,255,.4);font-style:italic;animation:lpFade .8s ease .45s both}
+.lp-line{width:50px;height:2px;background:linear-gradient(90deg,#2D6A4F,#E65100);margin:20px auto 0;border-radius:2px;animation:lpFade .8s ease .6s both}
+
+.lp-stores{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px;margin-top:-10px;position:relative;z-index:3}
+.lp-store{border-radius:20px;padding:28px 16px;text-align:center;color:#fff;position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:lpUp .6s ease both}
+.lp-store:nth-child(2){animation-delay:.12s}
+.lp-store.od{background:linear-gradient(145deg,#0d2818 0%,#1a4a35 50%,#2D6A4F 100%);box-shadow:0 8px 30px rgba(45,106,79,.25)}
+.lp-store.celeb{background:linear-gradient(145deg,#5a1a00 0%,#BF360C 50%,#E65100 100%);box-shadow:0 8px 30px rgba(230,81,0,.25)}
+.lp-store .store-icon{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;backdrop-filter:blur(4px)}
+.lp-store .store-icon svg{width:28px;height:28px;color:#fff}
+.lp-store h3{font-size:1.05rem;font-weight:700;margin-bottom:6px;letter-spacing:1px}
+.lp-store p{font-size:.75rem;opacity:.7;line-height:1.5;max-width:140px}
+
+.lp-about{margin:24px 20px 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 22px;backdrop-filter:blur(6px);animation:lpUp .6s ease .25s both}
+.lp-about .label{font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:#2D6A4F;margin-bottom:12px;font-weight:600}
+.lp-about p{color:rgba(255,255,255,.55);font-size:.92rem;line-height:1.8}
+
+.lp-values{display:flex;gap:12px;padding:0 20px;margin-top:20px;animation:lpUp .6s ease .35s both}
+.lp-val{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 10px;text-align:center}
+.lp-val span{display:block;font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#2D6A4F,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.lp-val small{font-size:.65rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase}
+
+.lp-cta{display:block;width:calc(100% - 40px);margin:28px 20px;padding:18px;background:linear-gradient(135deg,#2D6A4F,#1a4a35);color:#fff;border:none;border-radius:16px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px;box-shadow:0 8px 30px rgba(45,106,79,.3);transition:all .25s;animation:lpUp .6s ease .45s both;position:relative;overflow:hidden}
+.lp-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-100%);transition:transform .5s}
 .lp-cta:active{transform:scale(.97)}
-.lp-foot{text-align:center;padding:10px 20px 30px;color:#aaa;font-size:.75rem}
+.lp-cta:active::after{transform:translateX(100%)}
+
+.lp-foot{text-align:center;padding:20px;color:rgba(255,255,255,.15);font-size:.7rem;letter-spacing:4px}
+
 @keyframes lpFade{from{opacity:0}to{opacity:1}}
-@keyframes lpUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lpUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 </style>
 
 <div id="landingPage">
 <div class="lp-hero">
+<div class="lp-hero-content">
+<div class="brand">Bienvenidos a</div>
 <h1>DUAVA</h1>
 <h2>PRISMA</h2>
-<p>Dos tiendas, una experiencia inteligente</p>
+<div class="tagline">Dos tiendas, una experiencia inteligente</div>
+<div class="lp-line"></div>
 </div>
-<div class="lp-grid">
-<div class="lp-card od">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v5c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M12 8v8M8 12h8"/></svg>
+</div>
+
+<div class="lp-stores">
+<div class="lp-store od">
+<div class="store-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v5c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg></div>
 <h3>Odonto Store</h3>
-<p>Materiales y suministros odontologicos profesionales</p>
+<p>Materiales y suministros odontologicos de primera</p>
 </div>
-<div class="lp-card celeb">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+<div class="lp-store celeb">
+<div class="store-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
 <h3>Celebraciones</h3>
-<p>Arte, manualidades y todo para cada celebracion</p>
+<p>Arte, manualidades y todo para celebrar</p>
 </div>
 </div>
+
 <div class="lp-about">
-<h3>Quienes somos</h3>
+<div class="label">Quienes somos</div>
 <p>En DUAVA PRISMA reunimos lo mejor de dos mundos en un solo lugar. Materiales odontologicos de calidad y productos de arte y celebraciones, con la atencion personalizada que nos caracteriza. Tu confianza es nuestra mayor motivacion.</p>
 </div>
-<button class="lp-cta" onclick="document.getElementById('landingPage').classList.add('hide');setTimeout(function(){document.getElementById('landingPage').style.display='none'},600)">Explorar productos</button>
+
+<div class="lp-values">
+<div class="lp-val"><span>2</span><small>Tiendas</small></div>
+<div class="lp-val"><span>+30</span><small>Productos</small></div>
+<div class="lp-val"><span>24h</span><small>Atencion</small></div>
+</div>
+
+<button class="lp-cta" onclick="abrirProductos()">EXPLORAR PRODUCTOS</button>
+
 <div class="lp-foot">DUAVA PRISMA</div>
 </div>
-<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js')</script>
+
+<script>
+function abrirProductos(){
+document.getElementById('landingPage').classList.add('hide');
+setTimeout(function(){document.getElementById('landingPage').style.display='none'},800);
+}
+function volverInicio(){
+var lp=document.getElementById('landingPage');
+lp.style.display='block';
+setTimeout(function(){lp.classList.remove('hide')},50);
+window.scrollTo(0,0);
+}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
+</script>
 
   <div class="loader-wrap" id="loader"><div class="loader-pulse"></div><div class="loader-text">Cargando productos...</div></div>
   <header class="header" id="header">
     <div class="header-inner">
-      <div class="header-logo"><h1>DUAVA PRISMA</h1><p>Dos tiendas, una experiencia inteligente</p></div>
+      <h1 onclick="volverInicio()" style="cursor:pointer">DUAVA PRISMA</h1>
+<p>Dos tiendas, una experiencia inteligente</p></div>
       <div class="header-badge"><span class="badge badge-odonto">OdontoStore</span><span class="badge badge-celeb">Celebraciones</span></div>
     </div>
   </header>
