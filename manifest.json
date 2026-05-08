@@ -1,9 +1,9 @@
 {
   "name": "DUAVA PRISMA",
-  "short_name": "DUAVA",
+  "short_name": "DUAVA Prisma",
   "description": "Dos tiendas, una experiencia inteligente",
   "start_url": "./index.html",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#F5F5F5",
   "theme_color": "#111827",
   "orientation": "portrait",
