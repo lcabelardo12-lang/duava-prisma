@@ -1,144 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DUAVA PRISMA</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2D6A4F">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <style>
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        html{scroll-behavior:smooth}
-        body{font-family:'Inter',-apple-system,sans-serif;background:#F5F5F5;color:#1A1A1A;min-height:100vh;-webkit-font-smoothing:antialiased}
-        :root{--bg:#F5F5F5;--surface:#FFF;--text:#1A1A1A;--text-2:#666;--accent:#2D6A4F;--accent-light:#E8F5E9;--border:#E0E0E0;--shadow:0 2px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 32px rgba(0,0,0,.10);--wa:#25D366;--wa-dark:#128C7E;--radius:16px;--gold:#D4A574;--transit-bg:#FFF8E1}
-        .loader-wrap{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,visibility .4s}
-        .loader-wrap.done{opacity:0;visibility:hidden;pointer-events:none}
-        .loader-pulse{width:56px;height:56px;border:4px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .9s linear infinite}
-        .loader-text{margin-top:20px;font-size:14px;color:var(--text-2);font-weight:500}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        .header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:16px 22px;transition:box-shadow .3s}
-        .header.scrolled{box-shadow:0 2px 16px rgba(0,0,0,.08)}
-        .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
-        .search-wrap{max-width:1200px;margin:0 auto;padding:16px 20px 8px}
-        .search-box{position:relative;max-width:640px}
-        .search-box svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--text-2);pointer-events:none}
-        .search-box input{width:100%;height:48px;padding:0 16px 0 46px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:15px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
-        .search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,106,79,.12)}
-        .search-box input::placeholder{color:#AAA}
-        .filter-wrap{max-width:1200px;margin:0 auto;padding:8px 20px 12px}
-        .filter-list{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-        .filter-list::-webkit-scrollbar{display:none}
-        .filter-btn{flex-shrink:0;padding:8px 20px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
-        .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
-        .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-        .stats-wrap{max-width:1200px;margin:0 auto;padding:0 20px 12px}
-        .stats-bar{display:flex;gap:12px;flex-wrap:wrap}
-        .stat-chip{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:999px}
-        .stat-chip b{color:var(--accent)}
-        .grid-wrap{max-width:1200px;margin:0 auto;padding:8px 20px 40px}
-        .product-grid{display:grid;grid-template-columns:1fr;gap:20px}
-        @media(min-width:640px){.product-grid{grid-template-columns:repeat(2,1fr);gap:20px}}
-        @media(min-width:1024px){.product-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
-        .product-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;animation:cardIn .45s ease both}
-        @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-        .carousel-wrap{position:relative;width:100%;background:linear-gradient(135deg,#f0f0f0,#e8e8e8)}
-        .carousel-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-        .carousel-track::-webkit-scrollbar{display:none}
-        .carousel-slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/3;overflow:hidden}
-        .carousel-slide img{width:100%;height:100%;object-fit:contain;transition:transform .4s}
-        .carousel-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 6px}
-        .cdot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .3s,transform .3s}
-        .cdot.active{background:var(--accent);transform:scale(1.2)}
-        .card-store-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:5px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;z-index:2}
-        .card-store-badge.odonto{background:var(--accent);color:#fff}
-        .card-store-badge.celebraciones{background:#E65100;color:#fff}
-        .card-no-photo{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:#BBB;background:linear-gradient(135deg,#f0f0f0,#e8e8e8);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
-        .card-body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
-        .card-title{font-size:16px;font-weight:700;color:var(--text);line-height:1.35}
-        .card-marca{font-size:12px;color:var(--text-2);font-weight:500}
-        .card-price-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0}
-        .card-price{font-size:22px;font-weight:800;color:var(--accent)}
-        .card-price::before{content:'$'}
-        .card-total-stock{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--accent-light);color:var(--accent);white-space:nowrap}
-        .card-total-stock.out{background:var(--transit-bg);color:#F57F17}
-        .tono-section{padding:4px 0}
-        .tono-label{font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px}
-        .tono-pills{display:flex;gap:6px;flex-wrap:wrap}
-        .tono-btn{padding:6px 14px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
-        .tono-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
-        .tono-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-        .stock-section{border:1px solid var(--border);border-radius:10px;overflow:hidden}
-        .stock-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:13px;font-weight:500}
-        .stock-row:not(:last-child){border-bottom:1px solid var(--border)}
-        .stock-row.available{background:#f0faf4;color:var(--accent)}
-        .stock-row.transit{background:var(--transit-bg);color:#795548}
-        .stock-row.none{background:#fafafa;color:var(--text-2);justify-content:center;font-size:12px}
-        .stock-suc{font-weight:600}
-        .stock-qty{font-weight:700}
-        .clinical-section{display:flex;flex-direction:column;gap:4px}
-        .clinical-section details{border:1px solid var(--border);border-radius:10px;overflow:hidden}
-        .clinical-section summary{padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;background:#fafafa;list-style:none;transition:background .2s}
-        .clinical-section summary::-webkit-details-marker{display:none}
-        .clinical-section summary::before{content:'▸';margin-right:8px;display:inline-block;transition:transform .2s;font-size:11px}
-        .clinical-section details[open] summary::before{transform:rotate(90deg)}
-        .clinical-section summary:hover{background:#f0f0f0}
-        .clinical-body{padding:10px 14px;font-size:13px;color:var(--text-2);line-height:1.7}
-        .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border:none;border-radius:12px;background:var(--wa);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;margin-top:auto}
-        .wa-btn:hover{background:var(--wa-dark)}
-        .wa-btn svg{width:18px;height:18px;flex-shrink:0}
-        .empty-state{text-align:center;padding:60px 20px;color:var(--text-2)}
-        .empty-state h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
-        .footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 20px;text-align:center}
-        .footer h2{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:8px}
-        .footer p{font-size:13px;color:var(--text-2);line-height:1.7}
-        .fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);z-index:200;cursor:pointer;border:none;text-decoration:none;transition:transform .2s}
-        .fab:hover{transform:scale(1.08)}
-        .fab svg{width:28px;height:28px}
-        #landingPage{position:fixed;inset:0;z-index:10000;background:#E8E4DE;overflow-y:auto;transition:opacity .6s}
-        #landingPage.hidden{display:none}
-        .lp-hero{padding:50px 24px 30px;text-align:center}
-        .lp-hero .marca{font-size:.75rem;letter-spacing:10px;color:#9E9A93;text-transform:uppercase;margin-bottom:20px}
-        .lp-hero h1{font-size:2.8rem;font-weight:800;color:#8B7355;letter-spacing:6px;line-height:1;margin-bottom:2px}
-        .lp-hero h2{font-size:1rem;font-weight:400;color:#9E9A93;letter-spacing:12px;margin-bottom:18px}
-        .lp-hero .linea{width:40px;height:2px;background:var(--gold);margin:0 auto 18px;border-radius:2px}
-        .lp-hero .frase{font-size:1.1rem;color:#9E9A93;font-style:italic;line-height:1.6;max-width:280px;margin:0 auto}
-        .lp-tiendas{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:24px 20px 0}
-        .lp-tienda{border-radius:16px;padding:24px 14px;text-align:center;color:#fff}
-        .lp-tienda.od{background:#7A9E7A}
-        .lp-tienda.celeb{background:var(--gold)}
-        .lp-tienda h3{font-size:1rem;font-weight:700;margin-bottom:6px}
-        .lp-tienda p{font-size:.75rem;opacity:.85;line-height:1.4}
-        .lp-quienes{margin:24px 20px 0;background:#FAF8F5;border-radius:16px;padding:24px;border:1px solid #E0DCD4}
-        .lp-quienes h3{color:#8B7355;font-size:1rem;font-weight:700;margin-bottom:10px}
-        .lp-quienes p{color:#9E9A93;font-size:.88rem;line-height:1.8;margin-bottom:8px}
-        .lp-datos{display:flex;gap:12px;padding:20px 20px 0}
-        .lp-dato{flex:1;text-align:center;background:#FAF8F5;border-radius:14px;padding:16px 8px;border:1px solid #E0DCD4}
-        .lp-dato span{display:block;font-size:1.4rem;font-weight:800;color:#8B7355;margin-bottom:2px}
-        .lp-dato small{font-size:.65rem;color:#9E9A93;text-transform:uppercase;letter-spacing:1px}
-        .lp-boton{display:block;width:calc(100% - 40px);margin:24px 20px;padding:16px;background:#8B7355;color:#FAF8F5;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px;transition:transform .2s}
-        .lp-boton:active{transform:scale(.97)}
-        .lp-pie{text-align:center;padding:16px;color:#C4BFB8;font-size:.7rem;letter-spacing:4px}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DUAVA PRISMA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2D6A4F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,sans-serif;background:#F5F5F5;color:#1A1A1A;min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{--bg:#F5F5F5;--surface:#FFF;--text:#1A1A1A;--text-2:#666;--accent:#2D6A4F;--accent-light:#E8F5E9;--border:#E0E0E0;--shadow:0 2px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 32px rgba(0,0,0,.10);--wa:#25D366;--wa-dark:#128C7E;--radius:16px;--gold:#D4A574;--transit-bg:#FFF8E1}
+.loader-wrap{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,visibility .4s}
+.loader-wrap.done{opacity:0;visibility:hidden;pointer-events:none}
+.loader-pulse{width:56px;height:56px;border:4px solid var(--accent-light);border-top-color:var(--accent);border-radius:50%;animation:spin .9s linear infinite}
+.loader-text{margin-top:20px;font-size:14px;color:var(--text-2);font-weight:500}
+@keyframes spin{to{transform:rotate(360deg)}}
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:16px 22px;transition:box-shadow .3s}
+.header.scrolled{box-shadow:0 2px 16px rgba(0,0,0,.08)}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.search-wrap{max-width:1200px;margin:0 auto;padding:16px 20px 8px}
+.search-box{position:relative;max-width:640px}
+.search-box svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--text-2);pointer-events:none}
+.search-box input{width:100%;height:48px;padding:0 16px 0 46px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:15px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,106,79,.12)}
+.search-box input::placeholder{color:#AAA}
+.filter-wrap{max-width:1200px;margin:0 auto;padding:8px 20px 12px}
+.filter-list{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.filter-list::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:8px 20px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.stats-wrap{max-width:1200px;margin:0 auto;padding:0 20px 12px}
+.stats-bar{display:flex;gap:12px;flex-wrap:wrap}
+.stat-chip{font-size:12px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:999px}
+.stat-chip b{color:var(--accent)}
+.grid-wrap{max-width:1200px;margin:0 auto;padding:8px 20px 40px}
+.product-grid{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:640px){.product-grid{grid-template-columns:repeat(2,1fr);gap:20px}}
+@media(min-width:1024px){.product-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
+.product-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;animation:cardIn .45s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.carousel-wrap{position:relative;width:100%;background:linear-gradient(135deg,#f0f0f0,#e8e8e8)}
+.carousel-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.carousel-track::-webkit-scrollbar{display:none}
+.carousel-slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/3;overflow:hidden}
+.carousel-slide img{width:100%;height:100%;object-fit:contain;transition:transform .4s}
+.carousel-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 6px}
+.cdot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .3s,transform .3s}
+.cdot.active{background:var(--accent);transform:scale(1.2)}
+.card-store-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:5px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;z-index:2}
+.card-store-badge.odonto{background:var(--accent);color:#fff}
+.card-store-badge.celebraciones{background:#E65100;color:#fff}
+.card-no-photo{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:#BBB;background:linear-gradient(135deg,#f0f0f0,#e8e8e8);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.card-body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card-title{font-size:16px;font-weight:700;color:var(--text);line-height:1.35}
+.card-marca{font-size:12px;color:var(--text-2);font-weight:500}
+.card-price-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0}
+.card-price{font-size:22px;font-weight:800;color:var(--accent)}
+.card-price::before{content:'$'}
+.card-total-stock{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--accent-light);color:var(--accent);white-space:nowrap}
+.card-total-stock.out{background:var(--transit-bg);color:#F57F17}
+.tono-section{padding:4px 0}
+.tono-label{font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px}
+.tono-pills{display:flex;gap:6px;flex-wrap:wrap}
+.tono-btn{padding:6px 14px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;user-select:none}
+.tono-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+.tono-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.stock-section{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.stock-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:13px;font-weight:500}
+.stock-row:not(:last-child){border-bottom:1px solid var(--border)}
+.stock-row.available{background:#f0faf4;color:var(--accent)}
+.stock-row.transit{background:var(--transit-bg);color:#795548}
+.stock-row.none{background:#fafafa;color:var(--text-2);justify-content:center;font-size:12px}
+.stock-suc{font-weight:600}
+.stock-qty{font-weight:700}
+.clinical-section{display:flex;flex-direction:column;gap:4px}
+.clinical-section details{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.clinical-section summary{padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;background:#fafafa;list-style:none;transition:background .2s}
+.clinical-section summary::-webkit-details-marker{display:none}
+.clinical-section summary::before{content:'▸';margin-right:8px;display:inline-block;transition:transform .2s;font-size:11px}
+.clinical-section details[open] summary::before{transform:rotate(90deg)}
+.clinical-section summary:hover{background:#f0f0f0}
+.clinical-body{padding:10px 14px;font-size:13px;color:var(--text-2);line-height:1.7}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border:none;border-radius:12px;background:var(--wa);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;margin-top:auto}
+.wa-btn:hover{background:var(--wa-dark)}
+.wa-btn svg{width:18px;height:18px;flex-shrink:0}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-2)}
+.empty-state h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 20px;text-align:center}
+.footer h2{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.footer p{font-size:13px;color:var(--text-2);line-height:1.7}
+.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);z-index:200;cursor:pointer;border:none;text-decoration:none;transition:transform .2s}
+.fab:hover{transform:scale(1.08)}
+.fab svg{width:28px;height:28px}
+#landingPage{position:fixed;inset:0;z-index:10000;background:#E8E4DE;overflow-y:auto}
+#landingPage.hidden{display:none}
+.lp-hero{padding:50px 24px 30px;text-align:center}
+.lp-hero .marca{font-size:.75rem;letter-spacing:10px;color:#9E9A93;text-transform:uppercase;margin-bottom:20px}
+.lp-hero h1{font-size:2.8rem;font-weight:800;color:#8B7355;letter-spacing:6px;line-height:1;margin-bottom:2px}
+.lp-hero h2{font-size:1rem;font-weight:400;color:#9E9A93;letter-spacing:12px;margin-bottom:18px}
+.lp-hero .linea{width:40px;height:2px;background:var(--gold);margin:0 auto 18px;border-radius:2px}
+.lp-hero .frase{font-size:1.1rem;color:#9E9A93;font-style:italic;line-height:1.6;max-width:280px;margin:0 auto}
+.lp-tiendas{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:24px 20px 0}
+.lp-tienda{border-radius:16px;padding:24px 14px;text-align:center;color:#fff}
+.lp-tienda.od{background:#7A9E7A}
+.lp-tienda.celeb{background:var(--gold)}
+.lp-tienda h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.lp-tienda p{font-size:.75rem;opacity:.85;line-height:1.4}
+.lp-quienes{margin:24px 20px 0;background:#FAF8F5;border-radius:16px;padding:24px;border:1px solid #E0DCD4}
+.lp-quienes h3{color:#8B7355;font-size:1rem;font-weight:700;margin-bottom:10px}
+.lp-quienes p{color:#9E9A93;font-size:.88rem;line-height:1.8;margin-bottom:8px}
+.lp-datos{display:flex;gap:12px;padding:20px 20px 0}
+.lp-dato{flex:1;text-align:center;background:#FAF8F5;border-radius:14px;padding:16px 8px;border:1px solid #E0DCD4}
+.lp-dato span{display:block;font-size:1.4rem;font-weight:800;color:#8B7355;margin-bottom:2px}
+.lp-dato small{font-size:.65rem;color:#9E9A93;text-transform:uppercase;letter-spacing:1px}
+.lp-boton{display:block;width:calc(100% - 40px);margin:24px 20px;padding:16px;background:#8B7355;color:#FAF8F5;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px;transition:transform .2s}
+.lp-boton:active{transform:scale(.97)}
+.lp-pie{text-align:center;padding:16px;color:#C4BFB8;font-size:.7rem;letter-spacing:4px}
+</style>
 </head>
 <body>
 
 <div id="landingPage">
-    <div class="lp-hero"><div class="marca">Bienvenidos a</div><h1>DUAVA</h1><h2>PRISMA</h2><div class="linea"></div><div class="frase">Dos tiendas, una experiencia inteligente</div></div>
-    <div class="lp-tiendas"><div class="lp-tienda od"><h3>Odonto Store</h3><p>Materiales y suministros odontológicos profesionales</p></div><div class="lp-tienda celeb"><h3>Celebraciones</h3><p>Arte, manualidades y todo para celebrar</p></div></div>
-    <div class="lp-quienes"><h3>Quiénes somos</h3><p>En DUAVA reunimos dos universos en un solo espacio: productos odontológicos seleccionados con profesionalidad y artículos personalizados pensados para regalar, celebrar y crear momentos especiales.</p><p>Trabajamos con una atención cercana, práctica y humana, buscando que cada cliente encuentre calidad, confianza y una experiencia sencilla al comprar.</p></div>
-    <div style="padding:0 20px;margin-top:20px;border-radius:16px;overflow:hidden"><img src="https://lh3.googleusercontent.com/d/1E0N2NfcY2O1NdpqQ2YZicDz3QGc3p7jh" alt="DUAVA PRISMA" style="width:100%;display:block;border-radius:16px" loading="lazy"></div>
-    <div class="lp-datos"><div class="lp-dato"><span>2</span><small>Tiendas</small></div><div class="lp-dato"><span>+30</span><small>Productos</small></div><div class="lp-dato"><span>24h</span><small>Atención</small></div></div>
-    <button class="lp-boton" onclick="abrirProductos()">EXPLORAR PRODUCTOS</button>
-    <p style="text-align:center;color:#9E9A93;font-size:1.0rem;letter-spacing:2px;margin:0 20px">La Habana · Holguín · Cuba</p>
-    <div class="lp-pie">DUAVA PRISMA</div>
+<div class="lp-hero"><div class="marca">Bienvenidos a</div><h1>DUAVA</h1><h2>PRISMA</h2><div class="linea"></div><div class="frase">Dos tiendas, una experiencia inteligente</div></div>
+<div class="lp-tiendas"><div class="lp-tienda od"><h3>Odonto Store</h3><p>Materiales y suministros odontológicos profesionales</p></div><div class="lp-tienda celeb"><h3>Celebraciones</h3><p>Arte, manualidades y todo para celebrar</p></div></div>
+<div class="lp-quienes"><h3>Quiénes somos</h3><p>En DUAVA reunimos dos universos en un solo espacio: productos odontológicos seleccionados con profesionalidad y artículos personalizados pensados para regalar, celebrar y crear momentos especiales.</p><p>Trabajamos con una atención cercana, práctica y humana, buscando que cada cliente encuentre calidad, confianza y una experiencia sencilla al comprar.</p></div>
+<div style="padding:0 20px;margin-top:20px;border-radius:16px;overflow:hidden"><img src="https://lh3.googleusercontent.com/d/1E0N2NfcY2O1NdpqQ2YZicDz3QGc3p7jh" alt="DUAVA PRISMA" style="width:100%;display:block;border-radius:16px" loading="lazy"></div>
+<div class="lp-datos"><div class="lp-dato"><span>2</span><small>Tiendas</small></div><div class="lp-dato"><span>+30</span><small>Productos</small></div><div class="lp-dato"><span>24h</span><small>Atención</small></div></div>
+<button class="lp-boton" onclick="abrirProductos()">EXPLORAR PRODUCTOS</button>
+<p style="text-align:center;color:#9E9A93;font-size:1.0rem;letter-spacing:2px;margin:0 20px">La Habana · Holguín · Cuba</p>
+<div class="lp-pie">DUAVA PRISMA</div>
 </div>
 
 <div class="loader-wrap" id="loader"><div class="loader-pulse"></div><div class="loader-text">Cargando productos...</div></div>
@@ -151,18 +151,24 @@
 
 <div class="stats-wrap"><div class="stats-bar"><span class="stat-chip">Total: <b id="statTotal">0</b></span><span class="stat-chip">OdontoStore: <b id="statOdonto">0</b></span><span class="stat-chip">Celebraciones: <b id="statCeleb">0</b></span></div></div>
 
-<div class="grid-wrap"><div class="product-grid" id="productGrid"></div></div>
+<div class="grid-wrap"><div class="product-grid" id="productGrid"><div class="empty-state"><h3>Cargando productos...</h3><p>Por favor espera un momento</p></div></div></div>
 
 <footer class="footer"><h2>DUAVA PRISMA</h2><p>Atención rápida por WhatsApp<br>Productos actualizados constantemente</p></footer>
 
 <a class="fab" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
 
 <script>
+// ============ METODO SIMPLE QUE SI FUNCIONA ============
 var SHEET_ID = '10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU';
 var GID_CAT = '1078512593';
 var GID_LOTE = '650594380';
 var GID_DET = '2033501719';
-var allProducts = [], filteredProducts = [], selectedTono = {}, currentFilter = 'todos', searchTerm = '';
+
+var allProducts = [];
+var filteredProducts = [];
+var selectedTono = {};
+var currentFilter = 'todos';
+var searchTerm = '';
 
 function abrirProductos() {
     document.getElementById('landingPage').classList.add('hidden');
@@ -179,6 +185,7 @@ function convDrive(u) {
     return m ? 'https://lh3.googleusercontent.com/d/' + m[1] : u;
 }
 
+// METODO SIMPLE: split por coma (IGUAL QUE PRUEBA.HTML)
 function getCSV(gid, cb) {
     var x = new XMLHttpRequest();
     x.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
@@ -220,16 +227,19 @@ function buildProducts(cat, lot, det) {
     var stk = {};
     if (det.length > 1) {
         for (var i = 1; i < det.length; i++) {
-            var lid = String(det[i][0] || ''), pid = String(det[i][1] || ''), rest = parseInt(det[i][8]) || 0;
+            var lid = String(det[i][0] || '').trim();
+            var pid = String(det[i][1] || '').trim();
+            var rest = parseInt(det[i][8]) || 0;
             if (!pid || rest <= 0) continue;
             var li = lotInfo[lid] || {};
             if (!stk[pid]) stk[pid] = {};
             var suc = li.s || 'General';
-            var k = li.e === 'En Transito' ? 'transito_' + suc : suc;
+            var k = (li.e === 'En Transito') ? 'transito_' + suc : suc;
             stk[pid][k] = (stk[pid][k] || 0) + rest;
         }
     }
-    var prods = {}, orden = [];
+    var prods = {};
+    var orden = [];
     if (cat.length > 1) {
         for (var i = 1; i < cat.length; i++) {
             var c = cat[i];
@@ -237,10 +247,16 @@ function buildProducts(cat, lot, det) {
             var nombre = c[1].trim();
             if (!prods[nombre]) {
                 prods[nombre] = {
-                    nombre: nombre, marca: c[2] || '', precio: parseFloat(c[10]) || 0,
-                    descClinica: c[9] || '', indicaciones: c[12] || '', contraindicaciones: c[13] || '',
-                    foto1: convDrive(c[14] || ''), foto2: convDrive(c[15] || ''),
-                    tienda: c.length > 16 ? c[16] || '' : '', tonos: []
+                    nombre: nombre,
+                    marca: c[2] || '',
+                    precio: parseFloat(c[10]) || 0,
+                    descClinica: c[9] || '',
+                    indicaciones: c[12] || '',
+                    contraindicaciones: c[13] || '',
+                    foto1: convDrive(c[14] || ''),
+                    foto2: convDrive(c[15] || ''),
+                    tienda: (c.length > 16) ? (c[16] || '') : '',
+                    tonos: []
                 };
                 orden.push(nombre);
             }
@@ -251,13 +267,23 @@ function buildProducts(cat, lot, det) {
             var id = String(c[0]).trim();
             var ts = stk[id] || {};
             var tot = 0;
-            for (var kk in ts) { if (kk.indexOf('transito_') !== 0) tot += ts[kk]; }
-            p.tonos.push({ tono: (c[8] || 'Unico').trim(), stock: ts, totalStock: tot });
+            for (var kk in ts) {
+                if (kk.indexOf('transito_') !== 0) tot += ts[kk];
+            }
+            p.tonos.push({
+                tono: (c[8] || 'Unico').trim(),
+                stock: ts,
+                totalStock: tot
+            });
         }
     }
     allProducts = [];
-    for (var i = 0; i < orden.length; i++) { allProducts.push(prods[orden[i]]); }
-    for (var i = 0; i < allProducts.length; i++) selectedTono[i] = 0;
+    for (var i = 0; i < orden.length; i++) {
+        allProducts.push(prods[orden[i]]);
+    }
+    for (var i = 0; i < allProducts.length; i++) {
+        selectedTono[i] = 0;
+    }
 }
 
 function updateStats() {
@@ -307,6 +333,11 @@ function render() {
     grid.innerHTML = h;
 }
 
+function esc(s) {
+    s = String(s || '');
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function createCard(p, idx) {
     var isOd = (p.tienda || '').toUpperCase().indexOf('ODONTO') >= 0;
     var sc = isOd ? 'odonto' : 'celebraciones';
@@ -332,4 +363,8 @@ function createCard(p, idx) {
         }
         th += '</div></div>';
     } else if (p.tonos.length === 1 && p.tonos[0].tono !== 'Unico') {
-        th = '<div class="tono-section"><span class="tono-label">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong
+        th = '<div class="tono-section"><span class="tono-label">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></span></div>';
+    }
+    var sh = buildStk(p, idx, 0);
+    var cli = '<div class="clinical-section">';
+    if (p.descClinica) cli += '<details><summary>Desc
