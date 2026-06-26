@@ -9,60 +9,385 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2D6A4F">
     <style>
-        body{font-family:sans-serif;background:#F5F5F5;margin:0;padding:20px}
-        h1{color:#2D6A4F}
-        .producto{background:white;padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-        .error{background:#FFE0E0;color:#C00;padding:20px;border-radius:10px;margin:20px 0}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh}
+        .header{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+        .header h1{font-size:20px;margin-bottom:2px}
+        .header p{font-size:12px;opacity:.9}
+        .container{max-width:800px;margin:0 auto;padding:16px}
+        .search-box{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:25px;font-size:15px;margin-bottom:12px;outline:none;background:#fff}
+        .search-box:focus{border-color:#2D6A4F}
+        .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+        .filter-btn{padding:8px 18px;border:2px solid #2D6A4F;border-radius:20px;background:#fff;color:#2D6A4F;font-weight:600;font-size:13px;cursor:pointer}
+        .filter-btn.active{background:#2D6A4F;color:#fff}
+        .stats{display:flex;gap:10px;margin-bottom:16px;font-size:12px;color:#666;flex-wrap:wrap}
+        .stats span{background:#fff;padding:5px 12px;border-radius:15px;font-weight:600}
+        .product-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .product-name{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+        .product-brand{font-size:13px;color:#888;margin-bottom:8px}
+        .product-price{font-size:20px;font-weight:800;color:#2D6A4F;margin-bottom:8px}
+        .product-photo{width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin-bottom:10px;background:#f5f5f5}
+        .tones{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+        .tone-btn{padding:6px 14px;border:1.5px solid #ccc;border-radius:20px;background:#fff;font-size:12px;font-weight:600;cursor:pointer}
+        .tone-btn.active{background:#2D6A4F;color:#fff;border-color:#2D6A4F}
+        .stock-info{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:10px}
+        .stock-row{display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;font-weight:500}
+        .stock-row.available{background:#e8f5e9;color:#2D6A4F}
+        .stock-row.transit{background:#fff8e1;color:#795548}
+        .stock-row.none{background:#fafafa;color:#999;justify-content:center}
+        .details{margin-bottom:10px}
+        .details summary{font-size:13px;font-weight:600;padding:8px;background:#f5f5f5;border-radius:8px;cursor:pointer}
+        .details p{font-size:13px;color:#555;padding:8px;line-height:1.6}
+        .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
+        .wa-btn:hover{background:#1fb855}
+        .empty{text-align:center;padding:40px;color:#999}
+        .empty h3{font-size:18px;color:#555;margin-bottom:6px}
+        .top-btn{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,.4);border:none;cursor:pointer;z-index:200;text-decoration:none}
+        .top-btn svg{width:24px;height:24px}
     </style>
 </head>
 <body>
-    <h1>DUAVA PRISMA</h1>
-    <p>La Habana · Holguín · Cuba</p>
-    <div id="contenido"><p>Cargando productos...</p></div>
+
+    <div class="header">
+        <h1>DUAVA PRISMA</h1>
+        <p>La Habana · Holguín · Cuba</p>
+    </div>
+
+    <div class="container">
+        <input type="text" class="search-box" id="searchInput" placeholder="Buscar productos..." autocomplete="off">
+
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="OdontoStore">OdontoStore</button>
+            <button class="filter-btn" data-filter="Celebraciones">Celebraciones</button>
+        </div>
+
+        <div class="stats" id="stats">
+            <span>Total: <b id="statTotal">0</b></span>
+            <span>OdontoStore: <b id="statOdonto">0</b></span>
+            <span>Celebraciones: <b id="statCeleb">0</b></span>
+        </div>
+
+        <div id="productList"></div>
+    </div>
+
+    <a class="top-btn" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
 
     <script>
-        alert('PASO 1: Script iniciado');
-
+        // === CONFIGURACION ===
         var SHEET_ID = '10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU';
         var GID_CAT = '1078512593';
+        var GID_LOTE = '650594380';
+        var GID_DET = '2033501719';
 
-        alert('PASO 2: IDs configurados');
+        var allProducts = [];
+        var currentFilter = 'todos';
+        var selectedTono = {};
 
-        var x = new XMLHttpRequest();
-        x.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + GID_CAT, true);
-
-        alert('PASO 3: XMLHttpRequest creado');
-
-        x.onload = function() {
-            alert('PASO 4: Datos recibidos. Status: ' + x.status);
-            if (x.status === 200) {
-                alert('PASO 5: Status 200 OK');
-                var lineas = x.responseText.split('\n');
-                alert('PASO 6: Lineas separadas: ' + lineas.length);
-                var html = '';
-                for (var i = 1; i < lineas.length; i++) {
-                    var datos = lineas[i].split(',');
-                    if (datos[1]) {
-                        html += '<div class="producto"><strong>' + datos[1] + '</strong></div>';
+        // === FUNCION PARA OBTENER CSV (METODO QUE SI FUNCIONA) ===
+        function getCSV(gid, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var lines = xhr.responseText.split('\n');
+                    var rows = [];
+                    for (var i = 0; i < lines.length; i++) {
+                        rows.push(lines[i].split(','));
                     }
+                    callback(rows);
+                } else {
+                    callback([]);
                 }
-                alert('PASO 7: Productos procesados');
-                document.getElementById('contenido').innerHTML = html || '<p>No se encontraron productos</p>';
-                alert('PASO 8: EXITO - Productos mostrados');
-            } else {
-                document.getElementById('contenido').innerHTML = '<div class="error">Error HTTP: ' + x.status + '</div>';
-                alert('ERROR: Status diferente a 200');
+            };
+            xhr.onerror = function() { callback([]); };
+            xhr.send();
+        }
+
+        // === CONVERTIR ENLACE DE GOOGLE DRIVE ===
+        function convDrive(url) {
+            if (!url) return '';
+            var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            return match ? 'https://lh3.googleusercontent.com/d/' + match[1] : url;
+        }
+
+        // === CARGAR PRODUCTOS ===
+        function loadProducts() {
+            getCSV(GID_CAT, function(cat) {
+                getCSV(GID_LOTE, function(lot) {
+                    getCSV(GID_DET, function(det) {
+                        buildProducts(cat, lot, det);
+                        updateStats();
+                        render();
+                    });
+                });
+            });
+        }
+
+        // === CONSTRUIR PRODUCTOS ===
+        function buildProducts(cat, lot, det) {
+            // Procesar lotes
+            var lotInfo = {};
+            for (var i = 1; i < lot.length; i++) {
+                if (lot[i][0]) {
+                    lotInfo[lot[i][0].trim()] = {
+                        sucursal: lot[i][1] || '',
+                        estado: lot[i][7] || ''
+                    };
+                }
             }
-        };
 
-        x.onerror = function() {
-            document.getElementById('contenido').innerHTML = '<div class="error">Error de conexion</div>';
-            alert('ERROR: No se pudo conectar');
-        };
+            // Procesar stock
+            var stockData = {};
+            for (var i = 1; i < det.length; i++) {
+                var loteId = (det[i][0] || '').trim();
+                var prodId = (det[i][1] || '').trim();
+                var cantidad = parseInt(det[i][8]) || 0;
+                if (!prodId || cantidad <= 0) continue;
 
-        alert('PASO 9: Enviando peticion...');
-        x.send();
-        alert('PASO 10: Peticion enviada. Esperando respuesta...');
+                var info = lotInfo[loteId] || {};
+                if (!stockData[prodId]) stockData[prodId] = {};
+
+                var sucursal = info.sucursal || 'General';
+                var key = (info.estado === 'En Transito') ? 'transito_' + sucursal : sucursal;
+                stockData[prodId][key] = (stockData[prodId][key] || 0) + cantidad;
+            }
+
+            // Procesar catalogo
+            var productos = {};
+            var orden = [];
+
+            for (var i = 1; i < cat.length; i++) {
+                var row = cat[i];
+                if (!row[0] || !row[1]) continue;
+
+                var nombre = row[1].trim();
+                if (!productos[nombre]) {
+                    productos[nombre] = {
+                        nombre: nombre,
+                        marca: row[2] || '',
+                        precio: parseFloat(row[10]) || 0,
+                        descClinica: row[9] || '',
+                        indicaciones: row[12] || '',
+                        contraindicaciones: row[13] || '',
+                        foto1: convDrive(row[14] || ''),
+                        foto2: convDrive(row[15] || ''),
+                        tienda: (row.length > 16) ? (row[16] || '') : '',
+                        tonos: []
+                    };
+                    orden.push(nombre);
+                }
+
+                var prod = productos[nombre];
+                if (row[14] && !prod.foto1) prod.foto1 = convDrive(row[14]);
+                if (row[15] && !prod.foto2) prod.foto2 = convDrive(row[15]);
+                if (row[9] && !prod.descClinica) prod.descClinica = row[9];
+
+                var prodId = row[0].trim();
+                var stock = stockData[prodId] || {};
+                var total = 0;
+                for (var k in stock) {
+                    if (k.indexOf('transito_') !== 0) total += stock[k];
+                }
+
+                prod.tonos.push({
+                    tono: (row[8] || 'Unico').trim(),
+                    stock: stock,
+                    totalStock: total
+                });
+            }
+
+            allProducts = [];
+            for (var i = 0; i < orden.length; i++) {
+                allProducts.push(productos[orden[i]]);
+            }
+            for (var i = 0; i < allProducts.length; i++) {
+                selectedTono[i] = 0;
+            }
+        }
+
+        // === ACTUALIZAR ESTADISTICAS ===
+        function updateStats() {
+            document.getElementById('statTotal').textContent = allProducts.length;
+            var od = 0, ce = 0;
+            for (var i = 0; i < allProducts.length; i++) {
+                var t = (allProducts[i].tienda || '').toUpperCase();
+                if (t.indexOf('ODONTO') >= 0) od++;
+                else if (t.indexOf('CELEBR') >= 0) ce++;
+            }
+            document.getElementById('statOdonto').textContent = od;
+            document.getElementById('statCeleb').textContent = ce;
+        }
+
+        // === RENDERIZAR PRODUCTOS ===
+        function render() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            var filtered = [];
+            var lista = document.getElementById('productList');
+
+            for (var i = 0; i < allProducts.length; i++) {
+                var p = allProducts[i];
+
+                // Filtro por tienda
+                if (currentFilter !== 'todos') {
+                    var t = (p.tienda || '').toUpperCase();
+                    if (currentFilter === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
+                    if (currentFilter === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
+                }
+
+                // Busqueda
+                if (searchTerm) {
+                    var found = false;
+                    if (p.nombre.toLowerCase().indexOf(searchTerm) >= 0) found = true;
+                    if (!found && p.marca && p.marca.toLowerCase().indexOf(searchTerm) >= 0) found = true;
+                    if (!found) {
+                        for (var j = 0; j < p.tonos.length; j++) {
+                            if (p.tonos[j].tono.toLowerCase().indexOf(searchTerm) >= 0) { found = true; break; }
+                        }
+                    }
+                    if (!found) continue;
+                }
+
+                filtered.push(p);
+            }
+
+            if (filtered.length === 0) {
+                lista.innerHTML = '<div class="empty"><h3>No se encontraron productos</h3><p>Intenta con otra busqueda</p></div>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < filtered.length; i++) {
+                html += createCard(filtered[i], i);
+            }
+            lista.innerHTML = html;
+        }
+
+        // === CREAR TARJETA DE PRODUCTO ===
+        function createCard(p, idx) {
+            var isOdonto = (p.tienda || '').toUpperCase().indexOf('ODONTO') >= 0;
+            var tiendaNombre = isOdonto ? 'OdontoStore' : 'Celebraciones';
+
+            var totalStock = 0;
+            for (var i = 0; i < p.tonos.length; i++) {
+                totalStock += p.tonos[i].totalStock;
+            }
+
+            var precio = p.precio.toFixed(0);
+            if (p.precio % 1 !== 0) precio = p.precio.toFixed(2);
+
+            var html = '<div class="product-card">';
+            html += '<h3 class="product-name">' + esc(p.nombre) + '</h3>';
+            if (p.marca) html += '<p class="product-brand">' + esc(p.marca) + ' - ' + tiendaNombre + '</p>';
+
+            // Foto
+            if (p.foto1) {
+                html += '<img class="product-photo" src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.style.display=\'none\'">';
+            }
+
+            html += '<p class="product-price">$' + precio + ' <small style="color:#888;font-size:12px">(' + totalStock + ' disponible' + (totalStock !== 1 ? 's' : '') + ')</small></p>';
+
+            // Tonos
+            if (p.tonos.length > 1) {
+                html += '<div class="tones" id="tones-' + idx + '">';
+                for (var i = 0; i < p.tonos.length; i++) {
+                    html += '<button class="tone-btn' + (i === 0 ? ' active' : '') + '" onclick="cambiarTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
+                }
+                html += '</div>';
+            } else if (p.tonos.length === 1 && p.tonos[0].tono !== 'Unico') {
+                html += '<p style="font-size:13px;color:#666">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></p>';
+            }
+
+            // Stock
+            html += '<div class="stock-info" id="stock-' + idx + '">';
+            html += buildStockHTML(p, 0);
+            html += '</div>';
+
+            // Detalles
+            html += '<div class="details">';
+            if (p.descClinica) html += '<details><summary>Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
+            if (p.indicaciones) html += '<details><summary>Indicaciones</summary><p>' + esc(p.indicaciones) + '</p></details>';
+            if (p.contraindicaciones) html += '<details><summary>Contraindicaciones</summary><p>' + esc(p.contraindicaciones) + '</p></details>';
+            html += '</div>';
+
+            // WhatsApp
+            var tonoActual = p.tonos[0] && p.tonos[0].tono !== 'Unico' ? ' - Tono ' + p.tonos[0].tono : '';
+            var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoActual);
+            html += '<a class="wa-btn" id="wa-' + idx + '" href="' + waLink + '" target="_blank">';
+            html += '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>';
+            html += 'Comprar por WhatsApp</a>';
+
+            html += '</div>';
+            return html;
+        }
+
+        function buildStockHTML(p, tonoIndex) {
+            var t = p.tonos[tonoIndex] || p.tonos[0];
+            if (!t) return '<div class="stock-row none">No disponible</div>';
+
+            var html = '';
+            var hasStock = false;
+
+            for (var k in t.stock) {
+                var q = t.stock[k];
+                if (q <= 0) continue;
+                if (k.indexOf('transito_') === 0) {
+                    html += '<div class="stock-row transit"><span>En transito a ' + esc(k.replace('transito_', '')) + '</span><span><b>' + q + ' ud</b></span></div>';
+                } else {
+                    html += '<div class="stock-row available"><span>' + esc(k) + '</span><span><b>' + q + ' ud</b></span></div>';
+                }
+                hasStock = true;
+            }
+
+            if (!hasStock) html += '<div class="stock-row none">No disponible</div>';
+            return html;
+        }
+
+        function cambiarTono(prodIndex, tonoIndex) {
+            selectedTono[prodIndex] = tonoIndex;
+
+            // Actualizar botones
+            var btns = document.querySelectorAll('#tones-' + prodIndex + ' .tone-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.toggle('active', i === tonoIndex);
+            }
+
+            // Actualizar stock
+            var stockDiv = document.getElementById('stock-' + prodIndex);
+            if (stockDiv) {
+                stockDiv.innerHTML = buildStockHTML(filteredProducts[prodIndex], tonoIndex);
+            }
+
+            // Actualizar WhatsApp
+            var p = filteredProducts[prodIndex];
+            var t = p.tonos[tonoIndex];
+            var tonoText = t && t.tono !== 'Unico' ? ' - Tono ' + t.tono : '';
+            var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
+            var waBtn = document.getElementById('wa-' + prodIndex);
+            if (waBtn) waBtn.href = waLink;
+        }
+
+        function esc(text) {
+            return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // === EVENTOS ===
+        document.getElementById('searchInput').addEventListener('input', render);
+
+        var filterBtns = document.querySelectorAll('.filter-btn');
+        for (var i = 0; i < filterBtns.length; i++) {
+            filterBtns[i].addEventListener('click', function() {
+                for (var j = 0; j < filterBtns.length; j++) filterBtns[j].classList.remove('active');
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                render();
+            });
+        }
+
+        // === INICIAR ===
+        loadProducts();
     </script>
 </body>
 </html>
