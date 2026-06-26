@@ -403,11 +403,9 @@
         function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
         function abrirProductos() {
-            document.getElementById('landingPage').classList.add('hide');
-            setTimeout(function() {
-                document.getElementById('landingPage').style.display = 'none';
-            }, 600);
-        }
+    var lp = document.getElementById('landingPage');
+    lp.style.display = 'none';
+}
 
         function volverInicio() {
             var lp = document.getElementById('landingPage');
