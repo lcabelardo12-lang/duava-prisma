@@ -39,7 +39,8 @@
         .details{margin-bottom:10px}
         .details summary{font-size:13px;font-weight:600;padding:8px 12px;background:#f5f5f5;border-radius:8px;cursor:pointer;list-style:none}
         .details summary::-webkit-details-marker{display:none}
-        .details p{font-size:13px;color:#555;padding:10px 12px;line-height:1.6;background:#fafafa;border-radius:0 0 8px 8px}
+        .details p{font-size:13px;color:#555;padding:10px 12px;line-height:1.6;background:#fafafa;border-radius:0 0 8px 8px;
+            max-height:150px;overflow-y:auto;white-space:pre-wrap;word-wrap:break-word}
         .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
         .empty{text-align:center;padding:40px;color:#999}
         .empty h3{font-size:18px;color:#555;margin-bottom:6px}
@@ -86,11 +87,25 @@ var filteredProducts = [];
 var currentFilter = 'todos';
 var selectedTono = {};
 
-// Columnas reales del Catalogo:
-// 0=ID, 1=Producto, 2=Marca, 3=Pais Origen, 4=Categoria
-// 5=Descripcion Clinica, 6=Indicaciones, 7=Contraindicaciones
-// 8=Tonos, 9=Presentacion, 10=Precio, 11=Stock_Estado
-// 12=Tienda, 13=Fecha Vencimiento, 14=Foto1, 15=Foto2
+// ====== PARSER CSV ROBUSTO (maneja comillas) ======
+function parseCSV(texto) {
+    var resultado = [];
+    var actual = '';
+    var entreComillas = false;
+    for (var i = 0; i < texto.length; i++) {
+        var c = texto[i];
+        if (c === '"') {
+            entreComillas = !entreComillas;
+        } else if (c === ',' && !entreComillas) {
+            resultado.push(actual);
+            actual = '';
+        } else {
+            actual += c;
+        }
+    }
+    resultado.push(actual);
+    return resultado;
+}
 
 function getCSV(gid, callback) {
     var xhr = new XMLHttpRequest();
@@ -100,7 +115,8 @@ function getCSV(gid, callback) {
             var lines = xhr.responseText.split('\n');
             var rows = [];
             for (var i = 0; i < lines.length; i++) {
-                rows.push(lines[i].split(','));
+                if (lines[i].trim() === '') continue;
+                rows.push(parseCSV(lines[i]));
             }
             callback(rows);
         } else { callback([]); }
@@ -180,7 +196,6 @@ function buildProducts(cat, lot, det) {
 
         if (existingKey) {
             var prod = productos[existingKey];
-            // Heredar datos clinicos si faltan
             if (!prod.descClinica && row[5]) prod.descClinica = row[5].trim();
             if (!prod.indicaciones && row[6]) prod.indicaciones = row[6].trim();
             if (!prod.contraindicaciones && row[7]) prod.contraindicaciones = row[7].trim();
@@ -301,10 +316,9 @@ function createCard(p, idx) {
     var html = '<div class="product-card">';
     html += '<h3 class="product-name">' + esc(p.nombre) + '</h3>';
 
-    // Info: marca, pais, categoria, tienda
     var infoParts = [];
     if (p.marca) infoParts.push(esc(p.marca));
-    if (p.pais) infoParts.push('🇨🇺' === '🇨🇺' ? esc(p.pais) : esc(p.pais));
+    if (p.pais) infoParts.push(esc(p.pais));
     if (p.categoria) infoParts.push(esc(p.categoria));
     infoParts.push(tiendaNombre);
     html += '<p class="product-info">' + infoParts.join(' · ') + '</p>';
@@ -315,7 +329,6 @@ function createCard(p, idx) {
 
     html += '<p class="product-price">$' + precio + '</p>';
 
-    // Tonos
     if (p.tonos.length > 1) {
         html += '<div class="tones-label">Tono:</div>';
         html += '<div class="tones" id="tones-' + idx + '">';
@@ -327,12 +340,10 @@ function createCard(p, idx) {
         html += '<p style="font-size:13px;color:#666;margin-bottom:8px">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></p>';
     }
 
-    // Stock
     html += '<div class="stock-info" id="stock-' + idx + '">';
     html += buildStockHTML(p, 0);
     html += '</div>';
 
-    // Detalles clinicos
     if (p.descClinica || p.indicaciones || p.contraindicaciones) {
         html += '<div class="details">';
         if (p.descClinica) html += '<details><summary>📋 Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
@@ -341,7 +352,6 @@ function createCard(p, idx) {
         html += '</div>';
     }
 
-    // WhatsApp
     var t = p.tonos[0];
     var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
     var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
