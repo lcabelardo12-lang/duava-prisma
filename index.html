@@ -87,24 +87,52 @@ var filteredProducts = [];
 var currentFilter = 'todos';
 var selectedTono = {};
 
-// ====== PARSER CSV ROBUSTO (maneja comillas) ======
-function parseCSV(texto) {
-    var resultado = [];
-    var actual = '';
+// ====== PARSER CSV ROBUSTO (soporta saltos de línea dentro de comillas) ======
+function parseCSVFull(texto) {
+    var filas = [];
+    var fila = [];
+    var celda = '';
     var entreComillas = false;
     for (var i = 0; i < texto.length; i++) {
         var c = texto[i];
-        if (c === '"') {
-            entreComillas = !entreComillas;
-        } else if (c === ',' && !entreComillas) {
-            resultado.push(actual);
-            actual = '';
+        var sig = (i + 1 < texto.length) ? texto[i + 1] : '';
+        
+        if (entreComillas) {
+            if (c === '"' && sig === '"') {
+                celda += '"';
+                i++; // saltar la siguiente comilla
+            } else if (c === '"') {
+                entreComillas = false;
+            } else {
+                celda += c;
+            }
         } else {
-            actual += c;
+            if (c === '"') {
+                entreComillas = true;
+            } else if (c === ',') {
+                fila.push(celda);
+                celda = '';
+            } else if (c === '\n' || c === '\r') {
+                // Salto de línea: fin de fila (ignorar \r si hay \n después)
+                if (c === '\r' && sig === '\n') {
+                    // ignorar, se procesará en la siguiente iteración
+                } else {
+                    fila.push(celda);
+                    celda = '';
+                    if (fila.length > 0 || texto[i-1] === ',' || (i>0 && texto[i-1]==='\n')) {
+                        filas.push(fila);
+                    }
+                    fila = [];
+                }
+            } else {
+                celda += c;
+            }
         }
     }
-    resultado.push(actual);
-    return resultado;
+    // Última celda
+    fila.push(celda);
+    if (fila.length > 0) filas.push(fila);
+    return filas;
 }
 
 function getCSV(gid, callback) {
@@ -112,12 +140,7 @@ function getCSV(gid, callback) {
     xhr.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
     xhr.onload = function() {
         if (xhr.status === 200) {
-            var lines = xhr.responseText.split('\n');
-            var rows = [];
-            for (var i = 0; i < lines.length; i++) {
-                if (lines[i].trim() === '') continue;
-                rows.push(parseCSV(lines[i]));
-            }
+            var rows = parseCSVFull(xhr.responseText);
             callback(rows);
         } else { callback([]); }
     };
