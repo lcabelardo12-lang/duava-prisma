@@ -11,7 +11,7 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh}
-        .header{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:space-between}
+        .header{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
         .header h1{font-size:20px;margin-bottom:2px}
         .header p{font-size:12px;opacity:.9}
         .container{max-width:800px;margin:0 auto;padding:16px}
@@ -37,8 +37,9 @@
         .stock-row.transit{background:#fff8e1;color:#795548}
         .stock-row.none{background:#fafafa;color:#999;justify-content:center}
         .details{margin-bottom:10px}
-        .details summary{font-size:13px;font-weight:600;padding:8px;background:#f5f5f5;border-radius:8px;cursor:pointer}
-        .details p{font-size:13px;color:#555;padding:8px;line-height:1.6}
+        .details summary{font-size:13px;font-weight:600;padding:8px 12px;background:#f5f5f5;border-radius:8px;cursor:pointer;list-style:none}
+        .details summary::-webkit-details-marker{display:none}
+        .details p{font-size:13px;color:#555;padding:10px 12px;line-height:1.6;background:#fafafa;border-radius:0 0 8px 8px}
         .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
         .wa-btn:hover{background:#1fb855}
         .empty{text-align:center;padding:40px;color:#999}
@@ -71,7 +72,7 @@
             <span>Celebraciones: <b id="statCeleb">0</b></span>
         </div>
 
-        <div id="productList"></div>
+        <div id="productList"><div class="empty"><h3>Cargando productos...</h3></div></div>
     </div>
 
     <a class="top-btn" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank">
@@ -79,7 +80,6 @@
     </a>
 
     <script>
-        // === CONFIGURACION ===
         var SHEET_ID = '10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU';
         var GID_CAT = '1078512593';
         var GID_LOTE = '650594380';
@@ -90,7 +90,6 @@
         var currentFilter = 'todos';
         var selectedTono = {};
 
-        // === FUNCION PARA OBTENER CSV (METODO QUE FUNCIONA) ===
         function getCSV(gid, callback) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
@@ -102,25 +101,21 @@
                         rows.push(lines[i].split(','));
                     }
                     callback(rows);
-                } else {
-                    callback([]);
-                }
+                } else { callback([]); }
             };
             xhr.onerror = function() { callback([]); };
             xhr.send();
         }
 
-        // === CONVERTIR ENLACE DE GOOGLE DRIVE ===
         function convDrive(url) {
             if (!url) return '';
-            var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (match) return 'https://lh3.googleusercontent.com/d/' + match[1];
-            var match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
-            if (match2) return 'https://lh3.googleusercontent.com/d/' + match2[1];
+            var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
+            var m2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (m2) return 'https://lh3.googleusercontent.com/d/' + m2[1];
             return url;
         }
 
-        // === CARGAR PRODUCTOS ===
         function loadProducts() {
             getCSV(GID_CAT, function(cat) {
                 getCSV(GID_LOTE, function(lot) {
@@ -133,7 +128,6 @@
             });
         }
 
-        // === CONSTRUIR PRODUCTOS ===
         function buildProducts(cat, lot, det) {
             var lotInfo = {};
             for (var i = 1; i < lot.length; i++) {
@@ -151,10 +145,8 @@
                 var prodId = (det[i][1] || '').trim();
                 var cantidad = parseInt(det[i][8]) || 0;
                 if (!prodId || cantidad <= 0) continue;
-
                 var info = lotInfo[loteId] || {};
                 if (!stockData[prodId]) stockData[prodId] = {};
-
                 var sucursal = info.sucursal || 'General';
                 var key = (info.estado === 'En Transito') ? 'transito_' + sucursal : sucursal;
                 stockData[prodId][key] = (stockData[prodId][key] || 0) + cantidad;
@@ -167,40 +159,73 @@
                 var row = cat[i];
                 if (!row[0] || !row[1]) continue;
 
-                var nombre = row[1].trim();
-                if (!productos[nombre]) {
+                // NORMALIZAR nombre: trim, lowercase, quitar espacios dobles
+                var nombreRaw = row[1] || '';
+                var nombre = nombreRaw.trim().replace(/\s+/g, ' ');
+
+                if (!nombre) continue;
+
+                // Buscar si ya existe con nombre similar
+                var existingKey = null;
+                for (var k in productos) {
+                    if (k.trim().replace(/\s+/g, ' ').toLowerCase() === nombre.toLowerCase()) {
+                        existingKey = k;
+                        break;
+                    }
+                }
+
+                if (existingKey) {
+                    // Ya existe, usar esa clave
+                    var prod = productos[existingKey];
+
+                    // Heredar datos clinicos si esta fila los tiene y el producto no
+                    if (!prod.descClinica && row[9]) prod.descClinica = row[9].trim();
+                    if (!prod.indicaciones && row[12]) prod.indicaciones = row[12].trim();
+                    if (!prod.contraindicaciones && row[13]) prod.contraindicaciones = row[13].trim();
+                    if (!prod.foto1 && row[14]) prod.foto1 = convDrive(row[14]);
+                    if (!prod.foto2 && row[15]) prod.foto2 = convDrive(row[15]);
+
+                    // Añadir tono
+                    var prodId = row[0].trim();
+                    var stock = stockData[prodId] || {};
+                    var total = 0;
+                    for (var sk in stock) {
+                        if (sk.indexOf('transito_') !== 0) total += stock[sk];
+                    }
+                    prod.tonos.push({
+                        tono: (row[8] || 'Unico').trim(),
+                        stock: stock,
+                        totalStock: total
+                    });
+                } else {
+                    // Producto nuevo
                     productos[nombre] = {
                         nombre: nombre,
                         marca: row[2] || '',
                         precio: parseFloat(row[10]) || 0,
-                        descClinica: row[9] || '',
-                        indicaciones: row[12] || '',
-                        contraindicaciones: row[13] || '',
+                        descClinica: (row[9] || '').trim(),
+                        indicaciones: (row[12] || '').trim(),
+                        contraindicaciones: (row[13] || '').trim(),
                         foto1: convDrive(row[14] || ''),
                         foto2: convDrive(row[15] || ''),
                         tienda: (row.length > 16) ? (row[16] || '') : '',
                         tonos: []
                     };
                     orden.push(nombre);
+
+                    var prod = productos[nombre];
+                    var prodId = row[0].trim();
+                    var stock = stockData[prodId] || {};
+                    var total = 0;
+                    for (var sk in stock) {
+                        if (sk.indexOf('transito_') !== 0) total += stock[sk];
+                    }
+                    prod.tonos.push({
+                        tono: (row[8] || 'Unico').trim(),
+                        stock: stock,
+                        totalStock: total
+                    });
                 }
-
-                var prod = productos[nombre];
-                if (row[14] && !prod.foto1) prod.foto1 = convDrive(row[14]);
-                if (row[15] && !prod.foto2) prod.foto2 = convDrive(row[15]);
-                if (row[9] && !prod.descClinica) prod.descClinica = row[9];
-
-                var prodId = row[0].trim();
-                var stock = stockData[prodId] || {};
-                var total = 0;
-                for (var k in stock) {
-                    if (k.indexOf('transito_') !== 0) total += stock[k];
-                }
-
-                prod.tonos.push({
-                    tono: (row[8] || 'Unico').trim(),
-                    stock: stock,
-                    totalStock: total
-                });
             }
 
             allProducts = [];
@@ -212,7 +237,6 @@
             }
         }
 
-        // === ACTUALIZAR ESTADISTICAS ===
         function updateStats() {
             document.getElementById('statTotal').textContent = allProducts.length;
             var od = 0, ce = 0;
@@ -225,7 +249,6 @@
             document.getElementById('statCeleb').textContent = ce;
         }
 
-        // === RENDERIZAR PRODUCTOS ===
         function render() {
             var searchTerm = document.getElementById('searchInput').value.toLowerCase();
             filteredProducts = [];
@@ -233,13 +256,11 @@
 
             for (var i = 0; i < allProducts.length; i++) {
                 var p = allProducts[i];
-
                 if (currentFilter !== 'todos') {
                     var t = (p.tienda || '').toUpperCase();
                     if (currentFilter === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
                     if (currentFilter === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
                 }
-
                 if (searchTerm) {
                     var found = false;
                     if (p.nombre.toLowerCase().indexOf(searchTerm) >= 0) found = true;
@@ -251,7 +272,6 @@
                     }
                     if (!found) continue;
                 }
-
                 filteredProducts.push(p);
             }
 
@@ -267,28 +287,22 @@
             lista.innerHTML = html;
         }
 
-        // === CREAR TARJETA DE PRODUCTO ===
         function createCard(p, idx) {
             var isOdonto = (p.tienda || '').toUpperCase().indexOf('ODONTO') >= 0;
             var tiendaNombre = isOdonto ? 'OdontoStore' : 'Celebraciones';
-
             var precio = p.precio.toFixed(0);
             if (p.precio % 1 !== 0) precio = p.precio.toFixed(2);
 
             var html = '<div class="product-card">';
             html += '<h3 class="product-name">' + esc(p.nombre) + '</h3>';
             if (p.marca) html += '<p class="product-brand">' + esc(p.marca) + ' · ' + tiendaNombre + '</p>';
-
-            // Foto
             if (p.foto1) {
-                html += '<img class="product-photo" src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.parentNode.removeChild(this)">';
+                html += '<img class="product-photo" src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.style.display=\'none\'">';
             }
-
             html += '<p class="product-price">$' + precio + '</p>';
 
-            // Tonos
             if (p.tonos.length > 1) {
-                html += '<div class="tones-label">Selecciona un tono:</div>';
+                html += '<div class="tones-label">Tono:</div>';
                 html += '<div class="tones" id="tones-' + idx + '">';
                 for (var i = 0; i < p.tonos.length; i++) {
                     html += '<button class="tone-btn' + (i === 0 ? ' active' : '') + '" onclick="cambiarTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
@@ -298,28 +312,24 @@
                 html += '<p style="font-size:13px;color:#666;margin-bottom:8px">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></p>';
             }
 
-            // Stock
             html += '<div class="stock-info" id="stock-' + idx + '">';
             html += buildStockHTML(p, 0);
             html += '</div>';
 
-            // Detalles colapsados
             if (p.descClinica || p.indicaciones || p.contraindicaciones) {
                 html += '<div class="details">';
-                if (p.descClinica) html += '<details><summary>Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
-                if (p.indicaciones) html += '<details><summary>Indicaciones</summary><p>' + esc(p.indicaciones) + '</p></details>';
-                if (p.contraindicaciones) html += '<details><summary>Contraindicaciones</summary><p>' + esc(p.contraindicaciones) + '</p></details>';
+                if (p.descClinica) html += '<details><summary>📋 Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
+                if (p.indicaciones) html += '<details><summary>✅ Indicaciones</summary><p>' + esc(p.indicaciones) + '</p></details>';
+                if (p.contraindicaciones) html += '<details><summary>⚠️ Contraindicaciones</summary><p>' + esc(p.contraindicaciones) + '</p></details>';
                 html += '</div>';
             }
 
-            // WhatsApp
             var t = p.tonos[0];
             var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
             var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
             html += '<a class="wa-btn" id="wa-' + idx + '" href="' + waLink + '" target="_blank">';
             html += '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>';
             html += 'Comprar por WhatsApp</a>';
-
             html += '</div>';
             return html;
         }
@@ -327,10 +337,8 @@
         function buildStockHTML(p, tonoIndex) {
             var t = p.tonos[tonoIndex];
             if (!t) return '<div class="stock-row none">Selecciona un tono</div>';
-
             var html = '';
             var hasStock = false;
-
             for (var k in t.stock) {
                 var q = t.stock[k];
                 if (q <= 0) continue;
@@ -341,27 +349,20 @@
                 }
                 hasStock = true;
             }
-
             if (!hasStock) html += '<div class="stock-row none">❌ Agotado en este tono</div>';
             return html;
         }
 
         function cambiarTono(prodIndex, tonoIndex) {
             selectedTono[prodIndex] = tonoIndex;
-
             var btns = document.querySelectorAll('#tones-' + prodIndex + ' .tone-btn');
             for (var i = 0; i < btns.length; i++) {
                 btns[i].classList.toggle('active', i === tonoIndex);
             }
-
             var p = filteredProducts[prodIndex];
             if (!p) return;
-
             var stockDiv = document.getElementById('stock-' + prodIndex);
-            if (stockDiv) {
-                stockDiv.innerHTML = buildStockHTML(p, tonoIndex);
-            }
-
+            if (stockDiv) stockDiv.innerHTML = buildStockHTML(p, tonoIndex);
             var t = p.tonos[tonoIndex];
             var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
             var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
@@ -373,9 +374,7 @@
             return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        // === EVENTOS ===
         document.getElementById('searchInput').addEventListener('input', render);
-
         var filterBtns = document.querySelectorAll('.filter-btn');
         for (var i = 0; i < filterBtns.length; i++) {
             filterBtns[i].addEventListener('click', function() {
@@ -386,7 +385,6 @@
             });
         }
 
-        // === INICIAR ===
         loadProducts();
     </script>
 </body>
