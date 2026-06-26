@@ -54,7 +54,6 @@
         .carousel-track::-webkit-scrollbar{display:none}
         .carousel-slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/3;overflow:hidden}
         .carousel-slide img{width:100%;height:100%;object-fit:contain;transition:transform .4s}
-        .product-card:hover .carousel-slide img{transform:scale(1.03)}
         .carousel-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 6px}
         .cdot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .3s,transform .3s}
         .cdot.active{background:var(--accent);transform:scale(1.2)}
@@ -104,7 +103,7 @@
         .fab:hover{transform:scale(1.08)}
         .fab svg{width:28px;height:28px}
         #landingPage{position:fixed;inset:0;z-index:10000;background:#E8E4DE;overflow-y:auto;transition:opacity .6s}
-        #landingPage.hide{opacity:0;pointer-events:none}
+        #landingPage.hidden{display:none}
         .lp-hero{padding:50px 24px 30px;text-align:center}
         .lp-hero .marca{font-size:.75rem;letter-spacing:10px;color:#9E9A93;text-transform:uppercase;margin-bottom:20px}
         .lp-hero h1{font-size:2.8rem;font-weight:800;color:#8B7355;letter-spacing:6px;line-height:1;margin-bottom:2px}
@@ -131,163 +130,206 @@
 </head>
 <body>
 
-    <div id="landingPage">
-        <div class="lp-hero"><div class="marca">Bienvenidos a</div><h1>DUAVA</h1><h2>PRISMA</h2><div class="linea"></div><div class="frase">Dos tiendas, una experiencia inteligente</div></div>
-        <div class="lp-tiendas"><div class="lp-tienda od"><h3>Odonto Store</h3><p>Materiales y suministros odontológicos profesionales</p></div><div class="lp-tienda celeb"><h3>Celebraciones</h3><p>Arte, manualidades y todo para celebrar</p></div></div>
-        <div class="lp-quienes"><h3>Quiénes somos</h3><p>En DUAVA reunimos dos universos en un solo espacio: productos odontológicos seleccionados con profesionalidad y artículos personalizados pensados para regalar, celebrar y crear momentos especiales.</p><p>Trabajamos con una atención cercana, práctica y humana, buscando que cada cliente encuentre calidad, confianza y una experiencia sencilla al comprar.</p></div>
-        <div style="padding:0 20px;margin-top:20px;border-radius:16px;overflow:hidden"><img src="https://lh3.googleusercontent.com/d/1E0N2NfcY2O1NdpqQ2YZicDz3QGc3p7jh" alt="DUAVA PRISMA" style="width:100%;display:block;border-radius:16px" loading="lazy"></div>
-        <div class="lp-datos"><div class="lp-dato"><span>2</span><small>Tiendas</small></div><div class="lp-dato"><span>+30</span><small>Productos</small></div><div class="lp-dato"><span>24h</span><small>Atención</small></div></div>
-        <button class="lp-boton" onclick="abrirProductos()">EXPLORAR PRODUCTOS</button>
-        <p style="text-align:center;color:#9E9A93;font-size:1.0rem;letter-spacing:2px;margin:0 20px">La Habana · Holguín · Cuba</p>
-        <div class="lp-pie">DUAVA PRISMA</div>
-    </div>
+<div id="landingPage">
+    <div class="lp-hero"><div class="marca">Bienvenidos a</div><h1>DUAVA</h1><h2>PRISMA</h2><div class="linea"></div><div class="frase">Dos tiendas, una experiencia inteligente</div></div>
+    <div class="lp-tiendas"><div class="lp-tienda od"><h3>Odonto Store</h3><p>Materiales y suministros odontológicos profesionales</p></div><div class="lp-tienda celeb"><h3>Celebraciones</h3><p>Arte, manualidades y todo para celebrar</p></div></div>
+    <div class="lp-quienes"><h3>Quiénes somos</h3><p>En DUAVA reunimos dos universos en un solo espacio: productos odontológicos seleccionados con profesionalidad y artículos personalizados pensados para regalar, celebrar y crear momentos especiales.</p><p>Trabajamos con una atención cercana, práctica y humana, buscando que cada cliente encuentre calidad, confianza y una experiencia sencilla al comprar.</p></div>
+    <div style="padding:0 20px;margin-top:20px;border-radius:16px;overflow:hidden"><img src="https://lh3.googleusercontent.com/d/1E0N2NfcY2O1NdpqQ2YZicDz3QGc3p7jh" alt="DUAVA PRISMA" style="width:100%;display:block;border-radius:16px" loading="lazy"></div>
+    <div class="lp-datos"><div class="lp-dato"><span>2</span><small>Tiendas</small></div><div class="lp-dato"><span>+30</span><small>Productos</small></div><div class="lp-dato"><span>24h</span><small>Atención</small></div></div>
+    <button class="lp-boton" onclick="abrirProductos()">EXPLORAR PRODUCTOS</button>
+    <p style="text-align:center;color:#9E9A93;font-size:1.0rem;letter-spacing:2px;margin:0 20px">La Habana · Holguín · Cuba</p>
+    <div class="lp-pie">DUAVA PRISMA</div>
+</div>
 
-    <div class="loader-wrap" id="loader"><div class="loader-pulse"></div><div class="loader-text">Cargando productos...</div></div>
-    <header class="header" id="header"><div class="header-inner"><div><h1 style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;margin:0">DUAVA PRISMA</h1><p style="font-size:11px;color:var(--text-2);font-weight:500;margin:0">Dos tiendas, una experiencia inteligente</p></div><button onclick="volverInicio()" style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0">Inicio</button></div></header>
-    <div class="search-wrap"><div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="searchInput" placeholder="Buscar productos..." autocomplete="off"></div></div>
-    <div class="filter-wrap"><div class="filter-list" id="filterList"><button class="filter-btn active" data-filter="todos">Todos</button><button class="filter-btn" data-filter="OdontoStore">OdontoStore</button><button class="filter-btn" data-filter="Celebraciones">Celebraciones</button></div></div>
-    <div class="stats-wrap"><div class="stats-bar"><span class="stat-chip">Total: <b id="statTotal">0</b></span><span class="stat-chip">OdontoStore: <b id="statOdonto">0</b></span><span class="stat-chip">Celebraciones: <b id="statCeleb">0</b></span></div></div>
-    <div class="grid-wrap"><div class="product-grid" id="productGrid"></div></div>
-    <footer class="footer"><h2>DUAVA PRISMA</h2><p>Atención rápida por WhatsApp<br>Productos actualizados constantemente</p></footer>
-    <a class="fab" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+<div class="loader-wrap" id="loader"><div class="loader-pulse"></div><div class="loader-text">Cargando productos...</div></div>
 
-    <script>
-        var SHEET_ID = '10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU';
-        var GID_CAT = '1078512593';
-        var GID_LOTE = '650594380';
-        var GID_DET = '2033501719';
+<header class="header" id="header"><div class="header-inner"><div><h1 style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;margin:0">DUAVA PRISMA</h1><p style="font-size:11px;color:var(--text-2);font-weight:500;margin:0">Dos tiendas, una experiencia inteligente</p></div><button onclick="volverInicio()" style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0">Inicio</button></div></header>
 
-        var allProducts = [], filteredProducts = [], selectedTono = {}, currentFilter = 'todos', searchTerm = '';
-        var loader = document.getElementById('loader'),
-            grid = document.getElementById('productGrid'),
-            searchEl = document.getElementById('searchInput'),
-            filterBtns = document.querySelectorAll('.filter-btn'),
-            header = document.getElementById('header');
+<div class="search-wrap"><div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="searchInput" placeholder="Buscar productos..." autocomplete="off"></div></div>
 
-        var waSvg = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+<div class="filter-wrap"><div class="filter-list" id="filterList"><button class="filter-btn active" data-filter="todos">Todos</button><button class="filter-btn" data-filter="OdontoStore">OdontoStore</button><button class="filter-btn" data-filter="Celebraciones">Celebraciones</button></div></div>
 
-        function abrirProductos() {
-            document.getElementById('landingPage').style.display = 'none';
-        }
+<div class="stats-wrap"><div class="stats-bar"><span class="stat-chip">Total: <b id="statTotal">0</b></span><span class="stat-chip">OdontoStore: <b id="statOdonto">0</b></span><span class="stat-chip">Celebraciones: <b id="statCeleb">0</b></span></div></div>
 
-        function volverInicio() {
-            document.getElementById('landingPage').style.display = 'block';
-            window.scrollTo(0, 0);
-        }
+<div class="grid-wrap"><div class="product-grid" id="productGrid"></div></div>
 
-        function convDrive(u) {
-            if (!u) return '';
-            var m = u.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            return m ? 'https://lh3.googleusercontent.com/d/' + m[1] : u;
-        }
+<footer class="footer"><h2>DUAVA PRISMA</h2><p>Atención rápida por WhatsApp<br>Productos actualizados constantemente</p></footer>
 
-        function getCSV(gid, cb) {
-            var x = new XMLHttpRequest();
-            x.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
-            x.onload = function() {
-                if (x.status === 200) {
-                    var lines = x.responseText.split('\n');
-                    var rows = [];
-                    for (var i = 0; i < lines.length; i++) {
-                        var cols = [];
-                        var col = '', q = false;
-                        for (var j = 0; j < lines[i].length; j++) {
-                            var ch = lines[i][j];
-                            if (ch === '"') { q = !q; }
-                            else if (ch === ',' && !q) { cols.push(col); col = ''; }
-                            else { col += ch; }
-                        }
-                        cols.push(col);
-                        rows.push(cols);
-                    }
-                    cb(rows);
-                } else { cb([]); }
-            };
-            x.onerror = function() { cb([]); };
-            x.send();
-        }
+<a class="fab" href="https://wa.me/5358386814?text=Hola%2C%20me%20interesa%20un%20producto%20de%20DUAVA%20PRISMA" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
 
-        function loadProducts() {
-            getCSV(GID_CAT, function(cat) {
-                getCSV(GID_LOTE, function(lot) {
-                    getCSV(GID_DET, function(det) {
-                        buildProducts(cat, lot, det);
-                        updateStats();
-                        render();
-                        loader.classList.add('done');
-                    });
-                });
+<script>
+var SHEET_ID = '10JZz_unbXlJvpryJ5r6QVktdlvIvRBhqOqWaa3SliGU';
+var GID_CAT = '1078512593';
+var GID_LOTE = '650594380';
+var GID_DET = '2033501719';
+var allProducts = [], filteredProducts = [], selectedTono = {}, currentFilter = 'todos', searchTerm = '';
+
+function abrirProductos() {
+    document.getElementById('landingPage').classList.add('hidden');
+}
+
+function volverInicio() {
+    document.getElementById('landingPage').classList.remove('hidden');
+    window.scrollTo(0, 0);
+}
+
+function convDrive(u) {
+    if (!u) return '';
+    var m = u.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? 'https://lh3.googleusercontent.com/d/' + m[1] : u;
+}
+
+function getCSV(gid, cb) {
+    var x = new XMLHttpRequest();
+    x.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
+    x.onload = function() {
+        if (x.status === 200) {
+            var lines = x.responseText.split('\n');
+            var rows = [];
+            for (var i = 0; i < lines.length; i++) {
+                rows.push(lines[i].split(','));
+            }
+            cb(rows);
+        } else { cb([]); }
+    };
+    x.onerror = function() { cb([]); };
+    x.send();
+}
+
+function loadProducts() {
+    getCSV(GID_CAT, function(cat) {
+        getCSV(GID_LOTE, function(lot) {
+            getCSV(GID_DET, function(det) {
+                buildProducts(cat, lot, det);
+                updateStats();
+                render();
+                document.getElementById('loader').classList.add('done');
             });
-            setTimeout(function() { loader.classList.add('done'); }, 12000);
-        }
+        });
+    });
+    setTimeout(function() { document.getElementById('loader').classList.add('done'); }, 12000);
+}
 
-        function buildProducts(cat, lot, det) {
-            var lotInfo = {};
-            if (lot.length > 1) {
-                for (var i = 1; i < lot.length; i++) {
-                    if (lot[i][0]) lotInfo[String(lot[i][0]).trim()] = { s: lot[i][1] || '', e: lot[i][7] || '' };
+function buildProducts(cat, lot, det) {
+    var lotInfo = {};
+    if (lot.length > 1) {
+        for (var i = 1; i < lot.length; i++) {
+            if (lot[i][0]) lotInfo[String(lot[i][0]).trim()] = { s: lot[i][1] || '', e: lot[i][7] || '' };
+        }
+    }
+    var stk = {};
+    if (det.length > 1) {
+        for (var i = 1; i < det.length; i++) {
+            var lid = String(det[i][0] || ''), pid = String(det[i][1] || ''), rest = parseInt(det[i][8]) || 0;
+            if (!pid || rest <= 0) continue;
+            var li = lotInfo[lid] || {};
+            if (!stk[pid]) stk[pid] = {};
+            var suc = li.s || 'General';
+            var k = li.e === 'En Transito' ? 'transito_' + suc : suc;
+            stk[pid][k] = (stk[pid][k] || 0) + rest;
+        }
+    }
+    var prods = {}, orden = [];
+    if (cat.length > 1) {
+        for (var i = 1; i < cat.length; i++) {
+            var c = cat[i];
+            if (!c[0] || !c[1]) continue;
+            var nombre = c[1].trim();
+            if (!prods[nombre]) {
+                prods[nombre] = {
+                    nombre: nombre, marca: c[2] || '', precio: parseFloat(c[10]) || 0,
+                    descClinica: c[9] || '', indicaciones: c[12] || '', contraindicaciones: c[13] || '',
+                    foto1: convDrive(c[14] || ''), foto2: convDrive(c[15] || ''),
+                    tienda: c.length > 16 ? c[16] || '' : '', tonos: []
+                };
+                orden.push(nombre);
+            }
+            var p = prods[nombre];
+            if (c[14] && !p.foto1) p.foto1 = convDrive(c[14]);
+            if (c[15] && !p.foto2) p.foto2 = convDrive(c[15]);
+            if (c[9] && !p.descClinica) p.descClinica = c[9];
+            var id = String(c[0]).trim();
+            var ts = stk[id] || {};
+            var tot = 0;
+            for (var kk in ts) { if (kk.indexOf('transito_') !== 0) tot += ts[kk]; }
+            p.tonos.push({ tono: (c[8] || 'Unico').trim(), stock: ts, totalStock: tot });
+        }
+    }
+    allProducts = [];
+    for (var i = 0; i < orden.length; i++) { allProducts.push(prods[orden[i]]); }
+    for (var i = 0; i < allProducts.length; i++) selectedTono[i] = 0;
+}
+
+function updateStats() {
+    document.getElementById('statTotal').textContent = allProducts.length;
+    var od = 0, ce = 0;
+    for (var i = 0; i < allProducts.length; i++) {
+        var t = (allProducts[i].tienda || '').toUpperCase();
+        if (t.indexOf('ODONTO') >= 0) od++;
+        else if (t.indexOf('CELEBR') >= 0) ce++;
+    }
+    document.getElementById('statOdonto').textContent = od;
+    document.getElementById('statCeleb').textContent = ce;
+}
+
+function render() {
+    filteredProducts = [];
+    var q = searchTerm.toLowerCase();
+    for (var i = 0; i < allProducts.length; i++) {
+        var p = allProducts[i];
+        if (currentFilter !== 'todos') {
+            var t = (p.tienda || '').toUpperCase();
+            if (currentFilter === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
+            if (currentFilter === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
+        }
+        if (q) {
+            var ok = false;
+            if (p.nombre.toLowerCase().indexOf(q) >= 0) ok = true;
+            if (!ok && p.marca && p.marca.toLowerCase().indexOf(q) >= 0) ok = true;
+            if (!ok) {
+                for (var j = 0; j < p.tonos.length; j++) {
+                    if (p.tonos[j].tono.toLowerCase().indexOf(q) >= 0) { ok = true; break; }
                 }
             }
-            var stk = {};
-            if (det.length > 1) {
-                for (var i = 1; i < det.length; i++) {
-                    var lid = String(det[i][0] || ''), pid = String(det[i][1] || ''), rest = parseInt(det[i][8]) || 0;
-                    if (!pid || rest <= 0) continue;
-                    var li = lotInfo[lid] || {};
-                    if (!stk[pid]) stk[pid] = {};
-                    var suc = li.s || 'General';
-                    var k = li.e === 'En Transito' ? 'transito_' + suc : suc;
-                    stk[pid][k] = (stk[pid][k] || 0) + rest;
-                }
-            }
-            var prods = {}, orden = [];
-            if (cat.length > 1) {
-                for (var i = 1; i < cat.length; i++) {
-                    var c = cat[i];
-                    if (!c[0] || !c[1]) continue;
-                    var nombre = c[1].trim();
-                    if (!prods[nombre]) {
-                        prods[nombre] = {
-                            nombre: nombre, marca: c[2] || '', precio: parseFloat(c[10]) || 0,
-                            descClinica: c[9] || '', indicaciones: c[12] || '', contraindicaciones: c[13] || '',
-                            foto1: convDrive(c[14] || ''), foto2: convDrive(c[15] || ''),
-                            tienda: c.length > 16 ? c[16] || '' : '', tonos: []
-                        };
-                        orden.push(nombre);
-                    }
-                    var p = prods[nombre];
-                    if (c[14] && !p.foto1) p.foto1 = convDrive(c[14]);
-                    if (c[15] && !p.foto2) p.foto2 = convDrive(c[15]);
-                    if (c[9] && !p.descClinica) p.descClinica = c[9];
-                    var id = String(c[0]).trim();
-                    var ts = stk[id] || {};
-                    var tot = 0;
-                    for (var kk in ts) { if (kk.indexOf('transito_') !== 0) tot += ts[kk]; }
-                    p.tonos.push({ tono: (c[8] || 'Unico').trim(), stock: ts, totalStock: tot });
-                }
-            }
-            allProducts = [];
-            for (var i = 0; i < orden.length; i++) { allProducts.push(prods[orden[i]]); }
-            for (var i = 0; i < allProducts.length; i++) selectedTono[i] = 0;
+            if (!ok) continue;
         }
+        filteredProducts.push(p);
+    }
+    var grid = document.getElementById('productGrid');
+    if (!filteredProducts.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><h3>No se encontraron productos</h3><p>Intenta con otra busqueda</p></div>';
+        return;
+    }
+    var h = '';
+    for (var i = 0; i < filteredProducts.length; i++) {
+        h += createCard(filteredProducts[i], i);
+    }
+    grid.innerHTML = h;
+}
 
-        function updateStats() {
-            document.getElementById('statTotal').textContent = allProducts.length;
-            var od = 0, ce = 0;
-            for (var i = 0; i < allProducts.length; i++) {
-                var t = (allProducts[i].tienda || '').toUpperCase();
-                if (t.indexOf('ODONTO') >= 0) od++;
-                else if (t.indexOf('CELEBR') >= 0) ce++;
-            }
-            document.getElementById('statOdonto').textContent = od;
-            document.getElementById('statCeleb').textContent = ce;
+function createCard(p, idx) {
+    var isOd = (p.tienda || '').toUpperCase().indexOf('ODONTO') >= 0;
+    var sc = isOd ? 'odonto' : 'celebraciones';
+    var sl = isOd ? 'OdontoStore' : 'Celebraciones';
+    var ts = 0;
+    for (var i = 0; i < p.tonos.length; i++) { ts += p.tonos[i].totalStock; }
+    var ps = p.precio.toFixed(p.precio % 1 === 0 ? 0 : 2);
+    var ch = '';
+    if (p.foto1) {
+        ch = '<div class="carousel-wrap"><span class="card-store-badge ' + sc + '">' + sl + '</span><div class="carousel-track"><div class="carousel-slide"><img src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy"></div>';
+        if (p.foto2) ch += '<div class="carousel-slide"><img src="' + esc(p.foto2) + '" alt="' + esc(p.nombre) + '" loading="lazy"></div>';
+        ch += '</div>';
+        if (p.foto2) ch += '<div class="carousel-dots"><span class="cdot active"></span><span class="cdot"></span></div>';
+        ch += '</div>';
+    } else {
+        ch = '<div class="carousel-wrap"><span class="card-store-badge ' + sc + '">' + sl + '</span><div class="card-no-photo">Sin foto</div></div>';
+    }
+    var th = '';
+    if (p.tonos.length > 1) {
+        th = '<div class="tono-section"><span class="tono-label">Tono:</span><div class="tono-pills">';
+        for (var i = 0; i < p.tonos.length; i++) {
+            th += '<button class="tono-btn' + (i === 0 ? ' active' : '') + '" onclick="selTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
         }
-
-        function render() {
-            filteredProducts = [];
-            var q = searchTerm.toLowerCase();
-            for (var i = 0; i < allProducts.length; i++) {
-                var p = allProducts[i];
-                if (currentFilter !== 'todos') {
-                    var t = (p.tienda || '').toUpperCase();
-                    if (currentFilter === 'OdontoStore' && t.indexOf('ODON
+        th += '</div></div>';
+    } else if (p.tonos.length === 1 && p.tonos[0].tono !== 'Unico') {
+        th = '<div class="tono-section"><span class="tono-label">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong
