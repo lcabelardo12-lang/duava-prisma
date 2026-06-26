@@ -11,7 +11,7 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh}
-        .header{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+        .header{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:space-between}
         .header h1{font-size:20px;margin-bottom:2px}
         .header p{font-size:12px;opacity:.9}
         .container{max-width:800px;margin:0 auto;padding:16px}
@@ -27,6 +27,7 @@
         .product-brand{font-size:13px;color:#888;margin-bottom:8px}
         .product-price{font-size:20px;font-weight:800;color:#2D6A4F;margin-bottom:8px}
         .product-photo{width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin-bottom:10px;background:#f5f5f5}
+        .tones-label{font-size:13px;font-weight:600;color:#555;margin-bottom:6px}
         .tones{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
         .tone-btn{padding:6px 14px;border:1.5px solid #ccc;border-radius:20px;background:#fff;font-size:12px;font-weight:600;cursor:pointer}
         .tone-btn.active{background:#2D6A4F;color:#fff;border-color:#2D6A4F}
@@ -49,8 +50,10 @@
 <body>
 
     <div class="header">
-        <h1>DUAVA PRISMA</h1>
-        <p>La Habana · Holguín · Cuba</p>
+        <div>
+            <h1>DUAVA PRISMA</h1>
+            <p>La Habana · Holguín · Cuba</p>
+        </div>
     </div>
 
     <div class="container">
@@ -83,10 +86,11 @@
         var GID_DET = '2033501719';
 
         var allProducts = [];
+        var filteredProducts = [];
         var currentFilter = 'todos';
         var selectedTono = {};
 
-        // === FUNCION PARA OBTENER CSV (METODO QUE SI FUNCIONA) ===
+        // === FUNCION PARA OBTENER CSV (METODO QUE FUNCIONA) ===
         function getCSV(gid, callback) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + gid, true);
@@ -110,7 +114,10 @@
         function convDrive(url) {
             if (!url) return '';
             var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            return match ? 'https://lh3.googleusercontent.com/d/' + match[1] : url;
+            if (match) return 'https://lh3.googleusercontent.com/d/' + match[1];
+            var match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match2) return 'https://lh3.googleusercontent.com/d/' + match2[1];
+            return url;
         }
 
         // === CARGAR PRODUCTOS ===
@@ -128,7 +135,6 @@
 
         // === CONSTRUIR PRODUCTOS ===
         function buildProducts(cat, lot, det) {
-            // Procesar lotes
             var lotInfo = {};
             for (var i = 1; i < lot.length; i++) {
                 if (lot[i][0]) {
@@ -139,7 +145,6 @@
                 }
             }
 
-            // Procesar stock
             var stockData = {};
             for (var i = 1; i < det.length; i++) {
                 var loteId = (det[i][0] || '').trim();
@@ -155,7 +160,6 @@
                 stockData[prodId][key] = (stockData[prodId][key] || 0) + cantidad;
             }
 
-            // Procesar catalogo
             var productos = {};
             var orden = [];
 
@@ -224,20 +228,18 @@
         // === RENDERIZAR PRODUCTOS ===
         function render() {
             var searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            var filtered = [];
+            filteredProducts = [];
             var lista = document.getElementById('productList');
 
             for (var i = 0; i < allProducts.length; i++) {
                 var p = allProducts[i];
 
-                // Filtro por tienda
                 if (currentFilter !== 'todos') {
                     var t = (p.tienda || '').toUpperCase();
                     if (currentFilter === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
                     if (currentFilter === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
                 }
 
-                // Busqueda
                 if (searchTerm) {
                     var found = false;
                     if (p.nombre.toLowerCase().indexOf(searchTerm) >= 0) found = true;
@@ -250,17 +252,17 @@
                     if (!found) continue;
                 }
 
-                filtered.push(p);
+                filteredProducts.push(p);
             }
 
-            if (filtered.length === 0) {
+            if (filteredProducts.length === 0) {
                 lista.innerHTML = '<div class="empty"><h3>No se encontraron productos</h3><p>Intenta con otra busqueda</p></div>';
                 return;
             }
 
             var html = '';
-            for (var i = 0; i < filtered.length; i++) {
-                html += createCard(filtered[i], i);
+            for (var i = 0; i < filteredProducts.length; i++) {
+                html += createCard(filteredProducts[i], i);
             }
             lista.innerHTML = html;
         }
@@ -270,34 +272,30 @@
             var isOdonto = (p.tienda || '').toUpperCase().indexOf('ODONTO') >= 0;
             var tiendaNombre = isOdonto ? 'OdontoStore' : 'Celebraciones';
 
-            var totalStock = 0;
-            for (var i = 0; i < p.tonos.length; i++) {
-                totalStock += p.tonos[i].totalStock;
-            }
-
             var precio = p.precio.toFixed(0);
             if (p.precio % 1 !== 0) precio = p.precio.toFixed(2);
 
             var html = '<div class="product-card">';
             html += '<h3 class="product-name">' + esc(p.nombre) + '</h3>';
-            if (p.marca) html += '<p class="product-brand">' + esc(p.marca) + ' - ' + tiendaNombre + '</p>';
+            if (p.marca) html += '<p class="product-brand">' + esc(p.marca) + ' · ' + tiendaNombre + '</p>';
 
             // Foto
             if (p.foto1) {
-                html += '<img class="product-photo" src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.style.display=\'none\'">';
+                html += '<img class="product-photo" src="' + esc(p.foto1) + '" alt="' + esc(p.nombre) + '" loading="lazy" onerror="this.parentNode.removeChild(this)">';
             }
 
-            html += '<p class="product-price">$' + precio + ' <small style="color:#888;font-size:12px">(' + totalStock + ' disponible' + (totalStock !== 1 ? 's' : '') + ')</small></p>';
+            html += '<p class="product-price">$' + precio + '</p>';
 
             // Tonos
             if (p.tonos.length > 1) {
+                html += '<div class="tones-label">Selecciona un tono:</div>';
                 html += '<div class="tones" id="tones-' + idx + '">';
                 for (var i = 0; i < p.tonos.length; i++) {
                     html += '<button class="tone-btn' + (i === 0 ? ' active' : '') + '" onclick="cambiarTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
                 }
                 html += '</div>';
             } else if (p.tonos.length === 1 && p.tonos[0].tono !== 'Unico') {
-                html += '<p style="font-size:13px;color:#666">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></p>';
+                html += '<p style="font-size:13px;color:#666;margin-bottom:8px">Tono: <strong>' + esc(p.tonos[0].tono) + '</strong></p>';
             }
 
             // Stock
@@ -305,16 +303,19 @@
             html += buildStockHTML(p, 0);
             html += '</div>';
 
-            // Detalles
-            html += '<div class="details">';
-            if (p.descClinica) html += '<details><summary>Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
-            if (p.indicaciones) html += '<details><summary>Indicaciones</summary><p>' + esc(p.indicaciones) + '</p></details>';
-            if (p.contraindicaciones) html += '<details><summary>Contraindicaciones</summary><p>' + esc(p.contraindicaciones) + '</p></details>';
-            html += '</div>';
+            // Detalles colapsados
+            if (p.descClinica || p.indicaciones || p.contraindicaciones) {
+                html += '<div class="details">';
+                if (p.descClinica) html += '<details><summary>Descripcion clinica</summary><p>' + esc(p.descClinica) + '</p></details>';
+                if (p.indicaciones) html += '<details><summary>Indicaciones</summary><p>' + esc(p.indicaciones) + '</p></details>';
+                if (p.contraindicaciones) html += '<details><summary>Contraindicaciones</summary><p>' + esc(p.contraindicaciones) + '</p></details>';
+                html += '</div>';
+            }
 
             // WhatsApp
-            var tonoActual = p.tonos[0] && p.tonos[0].tono !== 'Unico' ? ' - Tono ' + p.tonos[0].tono : '';
-            var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoActual);
+            var t = p.tonos[0];
+            var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
+            var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
             html += '<a class="wa-btn" id="wa-' + idx + '" href="' + waLink + '" target="_blank">';
             html += '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>';
             html += 'Comprar por WhatsApp</a>';
@@ -324,8 +325,8 @@
         }
 
         function buildStockHTML(p, tonoIndex) {
-            var t = p.tonos[tonoIndex] || p.tonos[0];
-            if (!t) return '<div class="stock-row none">No disponible</div>';
+            var t = p.tonos[tonoIndex];
+            if (!t) return '<div class="stock-row none">Selecciona un tono</div>';
 
             var html = '';
             var hasStock = false;
@@ -334,36 +335,35 @@
                 var q = t.stock[k];
                 if (q <= 0) continue;
                 if (k.indexOf('transito_') === 0) {
-                    html += '<div class="stock-row transit"><span>En transito a ' + esc(k.replace('transito_', '')) + '</span><span><b>' + q + ' ud</b></span></div>';
+                    html += '<div class="stock-row transit"><span>🚚 En transito a ' + esc(k.replace('transito_', '')) + '</span><span><b>' + q + ' ud</b></span></div>';
                 } else {
-                    html += '<div class="stock-row available"><span>' + esc(k) + '</span><span><b>' + q + ' ud</b></span></div>';
+                    html += '<div class="stock-row available"><span>✅ ' + esc(k) + '</span><span><b>' + q + ' ud</b></span></div>';
                 }
                 hasStock = true;
             }
 
-            if (!hasStock) html += '<div class="stock-row none">No disponible</div>';
+            if (!hasStock) html += '<div class="stock-row none">❌ Agotado en este tono</div>';
             return html;
         }
 
         function cambiarTono(prodIndex, tonoIndex) {
             selectedTono[prodIndex] = tonoIndex;
 
-            // Actualizar botones
             var btns = document.querySelectorAll('#tones-' + prodIndex + ' .tone-btn');
             for (var i = 0; i < btns.length; i++) {
                 btns[i].classList.toggle('active', i === tonoIndex);
             }
 
-            // Actualizar stock
+            var p = filteredProducts[prodIndex];
+            if (!p) return;
+
             var stockDiv = document.getElementById('stock-' + prodIndex);
             if (stockDiv) {
-                stockDiv.innerHTML = buildStockHTML(filteredProducts[prodIndex], tonoIndex);
+                stockDiv.innerHTML = buildStockHTML(p, tonoIndex);
             }
 
-            // Actualizar WhatsApp
-            var p = filteredProducts[prodIndex];
             var t = p.tonos[tonoIndex];
-            var tonoText = t && t.tono !== 'Unico' ? ' - Tono ' + t.tono : '';
+            var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
             var waLink = 'https://wa.me/5358386814?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
             var waBtn = document.getElementById('wa-' + prodIndex);
             if (waBtn) waBtn.href = waLink;
