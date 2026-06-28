@@ -13,7 +13,6 @@
         html{scroll-behavior:smooth}
         body{font-family:'Inter',-apple-system,sans-serif;background:#F5F5F5;color:#1A1A1A;min-height:100vh;-webkit-font-smoothing:antialiased}
         
-        /* ===== LANDING PAGE ===== */
         #landingPage{position:fixed;inset:0;z-index:10000;background:#E8E4DE;overflow-y:auto;transition:opacity .6s}
         #landingPage.hidden{opacity:0;pointer-events:none}
         .lp-hero{padding:50px 24px 30px;text-align:center}
@@ -39,7 +38,6 @@
         .lp-boton:active{transform:scale(.97)}
         .lp-pie{text-align:center;padding:16px;color:#C4BFB8;font-size:.7rem;letter-spacing:4px}
 
-        /* ===== CATÁLOGO ===== */
         .header-catalogo{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:space-between}
         .header-catalogo h1{font-size:20px;margin-bottom:2px}
         .header-catalogo p{font-size:12px;opacity:.9}
@@ -59,7 +57,6 @@
         .product-info{font-size:13px;color:#888;margin-bottom:8px}
         .product-price{font-size:20px;font-weight:800;color:#2D6A4F;margin-bottom:8px}
 
-        /* carrusel */
         .carousel-wrap{position:relative;width:100%;background:#f5f5f5;border-radius:10px;overflow:hidden;margin-bottom:10px}
         .carousel-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
         .carousel-track::-webkit-scrollbar{display:none}
@@ -74,7 +71,7 @@
         .tone-btn{padding:6px 14px;border:1.5px solid #ccc;border-radius:20px;background:#fff;font-size:12px;font-weight:600;cursor:pointer}
         .tone-btn.active{background:#2D6A4F;color:#fff;border-color:#2D6A4F}
         .stock-info{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:10px}
-        .stock-row{display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;font-weight:500}
+        .stock-row{display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;font-weight:500;align-items:center;flex-wrap:wrap;gap:4px}
         .stock-row.available{background:#e8f5e9;color:#2D6A4F}
         .stock-row.transit{background:#fff8e1;color:#795548}
         .stock-row.none{background:#fafafa;color:#999;justify-content:center}
@@ -120,7 +117,7 @@
         </div>
         <div class="lp-datos">
             <div class="lp-dato"><span>2</span><small>Tiendas</small></div>
-            <div class="lp-dato"><span id="totalProductosLanding">+30</span><small>Productos</small></div>
+            <div class="lp-dato"><span id="totalProductosLanding">+16</span><small>Productos</small></div>
             <div class="lp-dato"><span>24h</span><small>Atención</small></div>
         </div>
         <button class="lp-boton" onclick="abrirCatalogo()">EXPLORAR PRODUCTOS</button>
@@ -259,16 +256,23 @@
             }
 
             var stockData = {};
+            var dateData = {}; // para guardar fechas de vencimiento por producto y clave
             for (var i = 1; i < det.length; i++) {
                 var loteId = (det[i][0] || '').trim();
                 var prodId = (det[i][1] || '').trim();
                 var cantidad = parseInt(det[i][8]) || 0;
+                var fechaVenc = (det[i][6] || '').trim(); // columna G índice 6
                 if (!prodId || cantidad <= 0) continue;
                 var info = lotInfo[loteId] || {};
                 if (!stockData[prodId]) stockData[prodId] = {};
+                if (!dateData[prodId]) dateData[prodId] = {};
                 var sucursal = info.sucursal || 'General';
                 var key = (info.estado === 'En Transito') ? 'transito_' + sucursal : sucursal;
                 stockData[prodId][key] = (stockData[prodId][key] || 0) + cantidad;
+                // Guardar la fecha; si hay más de un lote con la misma clave, mantenemos la primera (o podríamos concatenar, pero mostramos solo una)
+                if (!dateData[prodId][key] && fechaVenc) {
+                    dateData[prodId][key] = fechaVenc;
+                }
             }
 
             var productos = {};
@@ -297,9 +301,11 @@
                     if (!prod.foto1 && row[14]) prod.foto1 = convDrive(row[14]);
                     if (!prod.foto2 && row[15]) prod.foto2 = convDrive(row[15]);
                     if (!prod.categoria && row[4]) prod.categoria = row[4].trim();
+                    if (!prod.presentacion && row[9]) prod.presentacion = row[9].trim();
 
                     var prodId = row[0].trim();
                     var stock = stockData[prodId] || {};
+                    var dates = dateData[prodId] || {};
                     var total = 0;
                     for (var sk in stock) {
                         if (sk.indexOf('transito_') !== 0) total += stock[sk];
@@ -307,6 +313,7 @@
                     prod.tonos.push({
                         tono: (row[8] || 'Unico').trim(),
                         stock: stock,
+                        stockDates: dates,
                         totalStock: total
                     });
                 } else {
@@ -315,6 +322,7 @@
                         marca: row[2] || '',
                         pais: row[3] || '',
                         categoria: (row[4] || '').trim(),
+                        presentacion: (row[9] || '').trim(),
                         precio: limpiarPrecio(row[10]),
                         descClinica: (row[5] || '').trim(),
                         indicaciones: (row[6] || '').trim(),
@@ -329,6 +337,7 @@
                     var prod = productos[nombre];
                     var prodId = row[0].trim();
                     var stock = stockData[prodId] || {};
+                    var dates = dateData[prodId] || {};
                     var total = 0;
                     for (var sk in stock) {
                         if (sk.indexOf('transito_') !== 0) total += stock[sk];
@@ -336,6 +345,7 @@
                     prod.tonos.push({
                         tono: (row[8] || 'Unico').trim(),
                         stock: stock,
+                        stockDates: dates,
                         totalStock: total
                     });
                 }
@@ -361,7 +371,6 @@
             document.getElementById('statOdonto').textContent = od;
             document.getElementById('statCeleb').textContent = ce;
 
-            // actualizar número en landing
             var totalSpan = document.getElementById('totalProductosLanding');
             if (totalSpan) {
                 totalSpan.textContent = '+' + allProducts.length;
@@ -422,10 +431,10 @@
             if (p.marca) infoParts.push(esc(p.marca));
             if (p.pais) infoParts.push(esc(p.pais));
             if (p.categoria) infoParts.push(esc(p.categoria));
+            if (p.presentacion) infoParts.push(esc(p.presentacion));
             infoParts.push(tiendaNombre);
             html += '<p class="product-info">' + infoParts.join(' · ') + '</p>';
 
-            // fotos: carrusel si hay dos
             if (p.foto1) {
                 if (p.foto2) {
                     html += '<div class="carousel-wrap">';
@@ -483,10 +492,12 @@
             for (var k in t.stock) {
                 var q = t.stock[k];
                 if (q <= 0) continue;
+                var fecha = (t.stockDates && t.stockDates[k]) ? t.stockDates[k] : '';
+                var fechaStr = fecha ? ' (Vence: ' + fecha + ')' : '';
                 if (k.indexOf('transito_') === 0) {
-                    html += '<div class="stock-row transit"><span>🚚 En transito a ' + esc(k.replace('transito_', '')) + '</span><span><b>' + q + ' ud</b></span></div>';
+                    html += '<div class="stock-row transit"><span>🚚 En transito a ' + esc(k.replace('transito_', '')) + fechaStr + '</span><span><b>' + q + ' ud</b></span></div>';
                 } else {
-                    html += '<div class="stock-row available"><span>✅ ' + esc(k) + '</span><span><b>' + q + ' ud</b></span></div>';
+                    html += '<div class="stock-row available"><span>✅ ' + esc(k) + fechaStr + '</span><span><b>' + q + ' ud</b></span></div>';
                 }
                 hasStock = true;
             }
