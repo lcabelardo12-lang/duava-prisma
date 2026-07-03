@@ -1,6 +1,6 @@
 {
-  "name": "DentalA - Asistente Dental",
-  "short_name": "DentalA",
+  "name": "Prisma",
+  "short_name": "Prisma",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
