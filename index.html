@@ -284,6 +284,7 @@
 
                 var nombre = row[1].trim().replace(/\s+/g, ' ');
                 if (!nombre) continue;
+                if (row[16] && String(row[16]).trim() === '1') continue;
 
                 var existingKey = null;
                 for (var k in productos) {
