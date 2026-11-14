@@ -12,9 +12,8 @@
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         html{scroll-behavior:smooth}
         body{font-family:'Inter',-apple-system,sans-serif;background:#F5F5F5;color:#1A1A1A;min-height:100vh;-webkit-font-smoothing:antialiased}
-        
-        #landingPage{position:fixed;inset:0;z-index:10000;background:#E8E4DE;overflow-y:auto;transition:opacity .6s}
-        #landingPage.hidden{opacity:0;pointer-events:none}
+
+        #landingPage{background:#E8E4DE}
         .lp-hero{padding:50px 24px 30px;text-align:center}
         .lp-hero .marca{font-size:.75rem;letter-spacing:10px;color:#9E9A93;text-transform:uppercase;margin-bottom:20px}
         .lp-hero h1{font-size:2.8rem;font-weight:800;color:#8B7355;letter-spacing:6px;line-height:1;margin-bottom:2px}
@@ -34,24 +33,35 @@
         .lp-dato{flex:1;text-align:center;background:#FAF8F5;border-radius:14px;padding:16px 8px;border:1px solid #E0DCD4}
         .lp-dato span{display:block;font-size:1.4rem;font-weight:800;color:#8B7355;margin-bottom:2px}
         .lp-dato small{font-size:.65rem;color:#9E9A93;text-transform:uppercase;letter-spacing:1px}
-        .lp-boton{display:block;width:calc(100% - 40px);margin:24px 20px;padding:16px;background:#8B7355;color:#FAF8F5;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:2px;transition:transform .2s}
-        .lp-boton:active{transform:scale(.97)}
         .lp-pie{text-align:center;padding:16px;color:#C4BFB8;font-size:.7rem;letter-spacing:4px}
 
-        .header-catalogo{background:#2D6A4F;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:space-between}
-        .header-catalogo h1{font-size:20px;margin-bottom:2px}
-        .header-catalogo p{font-size:12px;opacity:.9}
-        .btn-inicio{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
-        .container{max-width:800px;margin:0 auto;padding:16px}
-        .search-box{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:25px;font-size:15px;margin-bottom:12px;outline:none;background:#fff}
-        .search-box:focus{border-color:#2D6A4F}
-        .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-        .filter-btn{padding:8px 18px;border:2px solid #2D6A4F;border-radius:20px;background:#fff;color:#2D6A4F;font-weight:600;font-size:13px;cursor:pointer}
-        .filter-btn.active{background:#2D6A4F;color:#fff}
-        .filter-btn.active.odonto-filter{background:#7A9E7A;border-color:#7A9E7A}
-        .filter-btn.active.celeb-filter{background:#D4A574;border-color:#D4A574}
-        .stats{display:flex;gap:10px;margin-bottom:16px;font-size:12px;color:#666;flex-wrap:wrap}
-        .stats span{background:#fff;padding:5px 12px;border-radius:15px;font-weight:600}
+        .search-wrap{max-width:800px;margin:0 auto;padding:24px 16px 8px}
+        .search-input{width:100%;padding:11px 18px;border:1.5px solid #E0DCD4;border-radius:12px;font-size:.92rem;outline:none;background:#fff;color:#1A1A1A;font-family:inherit}
+        .search-input:focus{border-color:#8B7355}
+        .search-input::placeholder{color:#C4BFB8}
+
+        .filters-section{max-width:800px;margin:0 auto;padding:0 16px 16px}
+        .f-label{font-size:.68rem;font-weight:700;color:#B5AFA8;text-transform:uppercase;letter-spacing:2px;padding:12px 0 4px}
+        .f-row{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+        .f-row::-webkit-scrollbar{display:none}
+        .f-btn{flex-shrink:0;padding:7px 16px;border:1.5px solid #E0DCD4;border-radius:20px;background:#FAF8F5;color:#8B7355;font-weight:600;font-size:.8rem;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .2s}
+        .f-btn:hover{border-color:#D4A574;background:#FFF8F0}
+        .f-btn.active{background:#8B7355;color:#FFF;border-color:#8B7355}
+        .f-btn.f-od{border-color:#C8D5C8;color:#5E8B5E}
+        .f-btn.f-od:hover{background:#F0F5F0}
+        .f-btn.f-od.active{background:#7A9E7A;border-color:#7A9E7A;color:#fff}
+        .f-btn.f-celeb{border-color:#E8D5BE;color:#B8956A}
+        .f-btn.f-celeb:hover{background:#FFF8F0}
+        .f-btn.f-celeb.active{background:#D4A574;border-color:#D4A574;color:#fff}
+
+        .stats{display:flex;gap:10px;margin-bottom:16px;font-size:.78rem;color:#B5AFA8;flex-wrap:wrap}
+        .stats span{background:#FAF8F5;padding:5px 12px;border-radius:15px;font-weight:600;border:1px solid #E0DCD4}
+
+        .cat-div{display:flex;align-items:center;gap:12px;padding:20px 0 12px}
+        .cat-div-line{flex:1;height:1px;background:#E0DCD4}
+        .cat-div-text{font-size:.72rem;font-weight:700;color:#B5AFA8;text-transform:uppercase;letter-spacing:3px;white-space:nowrap}
+
+        .container{max-width:800px;margin:0 auto;padding:0 16px 60px}
         .product-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
         .product-name{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
         .product-info{font-size:13px;color:#888;margin-bottom:8px}
@@ -88,7 +98,6 @@
 </head>
 <body>
 
-    <!-- ===== LANDING PAGE ===== -->
     <div id="landingPage">
         <div class="lp-hero">
             <div class="marca">Bienvenidos a</div>
@@ -120,31 +129,33 @@
             <div class="lp-dato"><span id="totalProductosLanding">+16</span><small>Productos</small></div>
             <div class="lp-dato"><span>24h</span><small>Atención</small></div>
         </div>
-        <button class="lp-boton" onclick="abrirCatalogo()">EXPLORAR PRODUCTOS</button>
         <p style="text-align:center;color:#9E9A93;font-size:1.0rem;letter-spacing:2px;margin:0 20px">La Habana · Holguín · Cuba</p>
         <div class="lp-pie">DUAVA PRISMA</div>
     </div>
 
-    <!-- ===== CATÁLOGO ===== -->
-    <div class="header-catalogo">
-        <div>
-            <h1>DUAVA PRISMA</h1>
-            <p>La Habana · Holguín · Cuba</p>
+    <div class="search-wrap">
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar productos..." autocomplete="off">
+    </div>
+
+    <div class="filters-section">
+        <div class="f-label">Tienda</div>
+        <div class="f-row">
+            <button class="f-btn active" onclick="setTienda('todos',this)">Todos</button>
+            <button class="f-btn f-od" onclick="setTienda('OdontoStore',this)">OdontoStore</button>
+            <button class="f-btn f-celeb" onclick="setTienda('Celebraciones',this)">Celebraciones</button>
         </div>
-        <button class="btn-inicio" onclick="volverInicio()">← Inicio</button>
+
+        <div class="f-label">Categoría</div>
+        <div class="f-row" id="catRow"></div>
+
+        <div class="f-label">Marca</div>
+        <div class="f-row" id="brandRow"></div>
     </div>
 
     <div class="container">
-        <input type="text" class="search-box" id="searchInput" placeholder="Buscar productos..." autocomplete="off">
-        <div class="filters" id="filters">
-            <button class="filter-btn active" data-filter="todos">Todos</button>
-            <button class="filter-btn odonto-filter" data-filter="OdontoStore">OdontoStore</button>
-            <button class="filter-btn celeb-filter" data-filter="Celebraciones">Celebraciones</button>
-        </div>
-        <div class="stats" id="stats">
+        <div class="stats">
+            <span>Mostrando: <b id="statShow">0</b></span>
             <span>Total: <b id="statTotal">0</b></span>
-            <span>OdontoStore: <b id="statOdonto">0</b></span>
-            <span>Celebraciones: <b id="statCeleb">0</b></span>
         </div>
         <div id="productList"><div class="empty"><h3>Cargando productos...</h3></div></div>
     </div>
@@ -161,16 +172,23 @@
 
         var allProducts = [];
         var filteredProducts = [];
-        var currentFilter = 'todos';
         var selectedTono = {};
+        var curTienda = 'todos';
+        var curCat = 'todos';
+        var curBrand = 'todos';
 
-        function abrirCatalogo() {
-            document.getElementById('landingPage').classList.add('hidden');
-        }
+        var CAT_ORDER = ['Resinas Compuestas','Adhesivos y Sustancias Auxiliares','Acabado, Pulido y Brillo','Cementación y Protección Pulpar','Prótesis, Rehabilitación y Blanqueamiento','Ortodoncia','Instrumental y Modelado Estético'];
 
-        function volverInicio() {
-            document.getElementById('landingPage').classList.remove('hidden');
-            window.scrollTo(0, 0);
+        function normBrand(b){
+            b=(b||'').trim();
+            if(!b)return '';
+            var u=b.toUpperCase();
+            if(u.indexOf('FGM')>=0)return 'FGM';
+            if(u.indexOf('SOLVENTUM')>=0||u.indexOf('3M')>=0)return 'Solventum';
+            if(u.indexOf('VIGODENT')>=0||u.indexOf('COLTENE')>=0||u.indexOf('COLTÈNE')>=0)return 'Vigodent';
+            if(u.indexOf('MAQUIRA')>=0)return 'Maquira';
+            if(u.indexOf('BISCO')>=0)return 'Bisco';
+            return b;
         }
 
         function parseCSVFull(texto) {
@@ -237,7 +255,7 @@
                 getCSV(GID_LOTE, function(lot) {
                     getCSV(GID_DET, function(det) {
                         buildProducts(cat, lot, det);
-                        updateStats();
+                        buildFilters();
                         render();
                     });
                 });
@@ -256,12 +274,12 @@
             }
 
             var stockData = {};
-            var dateData = {}; // para guardar fechas de vencimiento por producto y clave
+            var dateData = {};
             for (var i = 1; i < det.length; i++) {
                 var loteId = (det[i][0] || '').trim();
                 var prodId = (det[i][1] || '').trim();
                 var cantidad = parseInt(det[i][8]) || 0;
-                var fechaVenc = (det[i][6] || '').trim(); // columna G índice 6
+                var fechaVenc = (det[i][6] || '').trim();
                 if (!prodId || cantidad <= 0) continue;
                 var info = lotInfo[loteId] || {};
                 if (!stockData[prodId]) stockData[prodId] = {};
@@ -269,7 +287,6 @@
                 var sucursal = info.sucursal || 'General';
                 var key = (info.estado === 'En Transito') ? 'transito_' + sucursal : sucursal;
                 stockData[prodId][key] = (stockData[prodId][key] || 0) + cantidad;
-                // Guardar la fecha; si hay más de un lote con la misma clave, mantenemos la primera (o podríamos concatenar, pero mostramos solo una)
                 if (!dateData[prodId][key] && fechaVenc) {
                     dateData[prodId][key] = fechaVenc;
                 }
@@ -320,7 +337,7 @@
                 } else {
                     productos[nombre] = {
                         nombre: nombre,
-                        marca: row[2] || '',
+                        marca: normBrand(row[2]),
                         pais: row[3] || '',
                         categoria: (row[4] || '').trim(),
                         presentacion: (row[9] || '').trim(),
@@ -356,40 +373,81 @@
             for (var i = 0; i < orden.length; i++) {
                 allProducts.push(productos[orden[i]]);
             }
-            for (var i = 0; i < allProducts.length; i++) {
-                selectedTono[i] = 0;
-            }
+            document.getElementById('statTotal').textContent = allProducts.length;
+            var tlp = document.getElementById('totalProductosLanding');
+            if (tlp) tlp.textContent = '+' + allProducts.length;
         }
 
-        function updateStats() {
-            document.getElementById('statTotal').textContent = allProducts.length;
-            var od = 0, ce = 0;
+        function buildFilters() {
+            var cats = {}, brands = {};
             for (var i = 0; i < allProducts.length; i++) {
-                var t = (allProducts[i].tienda || '').toUpperCase();
-                if (t.indexOf('ODONTO') >= 0) od++;
-                else if (t.indexOf('CELEBR') >= 0) ce++;
+                var p = allProducts[i];
+                if (p.categoria) cats[p.categoria] = true;
+                if (p.marca) brands[p.marca] = true;
             }
-            document.getElementById('statOdonto').textContent = od;
-            document.getElementById('statCeleb').textContent = ce;
 
-            var totalSpan = document.getElementById('totalProductosLanding');
-            if (totalSpan) {
-                totalSpan.textContent = '+' + allProducts.length;
+            var catList = [];
+            for (var j = 0; j < CAT_ORDER.length; j++) {
+                if (cats[CAT_ORDER[j]]) { catList.push(CAT_ORDER[j]); delete cats[CAT_ORDER[j]]; }
             }
+            for (var k in cats) catList.push(k);
+
+            var brandList = Object.keys(brands).sort();
+
+            var hCat = '<button class="f-btn active" onclick="setCat(\'todos\',this)">Todo</button>';
+            for (var i = 0; i < catList.length; i++) {
+                hCat += '<button class="f-btn" onclick="setCat(\'' + catList[i].replace(/'/g, "\\'") + '\',this)">' + esc(catList[i]) + '</button>';
+            }
+            document.getElementById('catRow').innerHTML = hCat;
+
+            var hBr = '<button class="f-btn active" onclick="setBrand(\'todos\',this)">Todo</button>';
+            for (var i = 0; i < brandList.length; i++) {
+                hBr += '<button class="f-btn" onclick="setBrand(\'' + brandList[i].replace(/'/g, "\\'") + '\',this)">' + esc(brandList[i]) + '</button>';
+            }
+            document.getElementById('brandRow').innerHTML = hBr;
+        }
+
+        function setTienda(v, btn) {
+            curTienda = v;
+            setActive(btn);
+            render();
+        }
+
+        function setCat(v, btn) {
+            curCat = v;
+            setActive(btn);
+            render();
+        }
+
+        function setBrand(v, btn) {
+            curBrand = v;
+            setActive(btn);
+            render();
+        }
+
+        function setActive(btn) {
+            var row = btn.parentElement;
+            var btns = row.querySelectorAll('.f-btn');
+            for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+            btn.classList.add('active');
         }
 
         function render() {
             var searchTerm = document.getElementById('searchInput').value.toLowerCase();
             filteredProducts = [];
-            var lista = document.getElementById('productList');
 
             for (var i = 0; i < allProducts.length; i++) {
                 var p = allProducts[i];
-                if (currentFilter !== 'todos') {
+
+                if (curTienda !== 'todos') {
                     var t = (p.tienda || '').toUpperCase();
-                    if (currentFilter === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
-                    if (currentFilter === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
+                    if (curTienda === 'OdontoStore' && t.indexOf('ODONTO') < 0) continue;
+                    if (curTienda === 'Celebraciones' && t.indexOf('CELEBR') < 0) continue;
                 }
+
+                if (curCat !== 'todos' && p.categoria !== curCat) continue;
+                if (curBrand !== 'todos' && p.marca !== curBrand) continue;
+
                 if (searchTerm) {
                     var found = false;
                     if (p.nombre.toLowerCase().indexOf(searchTerm) >= 0) found = true;
@@ -403,18 +461,54 @@
                     }
                     if (!found) continue;
                 }
+
                 filteredProducts.push(p);
             }
 
+            document.getElementById('statShow').textContent = filteredProducts.length;
+
+            var lista = document.getElementById('productList');
             if (filteredProducts.length === 0) {
-                lista.innerHTML = '<div class="empty"><h3>No se encontraron productos</h3><p>Intenta con otra busqueda</p></div>';
+                lista.innerHTML = '<div class="empty"><h3>No se encontraron productos</h3><p>Intenta con otra búsqueda</p></div>';
                 return;
             }
 
             var html = '';
-            for (var i = 0; i < filteredProducts.length; i++) {
-                html += createCard(filteredProducts[i], i);
+
+            if (curBrand !== 'todos') {
+                filteredProducts.sort(function(a, b) { return a.nombre.localeCompare(b.nombre); });
+                html += '<div class="cat-div"><div class="cat-div-line"></div><div class="cat-div-text">' + esc(curBrand) + '</div><div class="cat-div-line"></div></div>';
+                for (var i = 0; i < filteredProducts.length; i++) {
+                    html += createCard(filteredProducts[i], i);
+                }
+            } else if (curCat !== 'todos') {
+                for (var i = 0; i < filteredProducts.length; i++) {
+                    html += createCard(filteredProducts[i], i);
+                }
+            } else {
+                var groups = {};
+                var groupOrder = [];
+                for (var i = 0; i < filteredProducts.length; i++) {
+                    var c = filteredProducts[i].categoria || 'Otros';
+                    if (!groups[c]) { groups[c] = []; groupOrder.push(c); }
+                    groups[c].push(i);
+                }
+                groupOrder.sort(function(a, b) {
+                    var ia = CAT_ORDER.indexOf(a), ib = CAT_ORDER.indexOf(b);
+                    if (ia < 0) ia = CAT_ORDER.length;
+                    if (ib < 0) ib = CAT_ORDER.length;
+                    return ia - ib;
+                });
+                for (var g = 0; g < groupOrder.length; g++) {
+                    var gc = groupOrder[g];
+                    html += '<div class="cat-div"><div class="cat-div-line"></div><div class="cat-div-text">' + esc(gc) + '</div><div class="cat-div-line"></div></div>';
+                    for (var j = 0; j < groups[gc].length; j++) {
+                        var idx = groups[gc][j];
+                        html += createCard(filteredProducts[idx], idx);
+                    }
+                }
             }
+
             lista.innerHTML = html;
             initCarousels();
         }
@@ -424,6 +518,8 @@
             var tiendaNombre = isOdonto ? 'OdontoStore' : 'Celebraciones';
             var precio = p.precio.toFixed(0);
             if (p.precio % 1 !== 0) precio = p.precio.toFixed(2);
+
+            var selTono = selectedTono[p.nombre] || 0;
 
             var html = '<div class="product-card">';
             html += '<h3 class="product-name">' + esc(p.nombre) + '</h3>';
@@ -456,7 +552,7 @@
                 html += '<div class="tones-label">Tono:</div>';
                 html += '<div class="tones" id="tones-' + idx + '">';
                 for (var i = 0; i < p.tonos.length; i++) {
-                    html += '<button class="tone-btn' + (i === 0 ? ' active' : '') + '" onclick="cambiarTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
+                    html += '<button class="tone-btn' + (i === selTono ? ' active' : '') + '" onclick="cambiarTono(' + idx + ',' + i + ')">' + esc(p.tonos[i].tono) + '</button>';
                 }
                 html += '</div>';
             } else if (p.tonos.length === 1 && p.tonos[0].tono !== 'Unico') {
@@ -464,7 +560,7 @@
             }
 
             html += '<div class="stock-info" id="stock-' + idx + '">';
-            html += buildStockHTML(p, 0);
+            html += buildStockHTML(p, selTono);
             html += '</div>';
 
             if (p.descClinica || p.indicaciones || p.contraindicaciones) {
@@ -475,7 +571,7 @@
                 html += '</div>';
             }
 
-            var t = p.tonos[0];
+            var t = p.tonos[selTono] || p.tonos[0];
             var tonoText = (t && t.tono !== 'Unico') ? ' - Tono ' + t.tono : '';
             var waLink = 'https://wa.me/59175203816?text=' + encodeURIComponent('Hola, me interesa: ' + p.nombre + tonoText);
             html += '<a class="wa-btn" id="wa-' + idx + '" href="' + waLink + '" target="_blank">';
@@ -507,13 +603,13 @@
         }
 
         function cambiarTono(prodIndex, tonoIndex) {
-            selectedTono[prodIndex] = tonoIndex;
+            var p = filteredProducts[prodIndex];
+            if (!p) return;
+            selectedTono[p.nombre] = tonoIndex;
             var btns = document.querySelectorAll('#tones-' + prodIndex + ' .tone-btn');
             for (var i = 0; i < btns.length; i++) {
                 btns[i].classList.toggle('active', i === tonoIndex);
             }
-            var p = filteredProducts[prodIndex];
-            if (!p) return;
             var stockDiv = document.getElementById('stock-' + prodIndex);
             if (stockDiv) stockDiv.innerHTML = buildStockHTML(p, tonoIndex);
             var t = p.tonos[tonoIndex];
@@ -548,15 +644,6 @@
         }
 
         document.getElementById('searchInput').addEventListener('input', render);
-        var filterBtns = document.querySelectorAll('.filter-btn');
-        for (var i = 0; i < filterBtns.length; i++) {
-            filterBtns[i].addEventListener('click', function() {
-                for (var j = 0; j < filterBtns.length; j++) filterBtns[j].classList.remove('active');
-                this.classList.add('active');
-                currentFilter = this.dataset.filter;
-                render();
-            });
-        }
 
         loadProducts();
     </script>
