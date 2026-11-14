@@ -8,6 +8,7 @@
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2D6A4F">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@700;800&family=Bebas+Neue&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         html{scroll-behavior:smooth}
@@ -60,9 +61,52 @@
         .stats span{background:#fff;padding:8px 16px;border-radius:15px;font-weight:600;border:1px solid #ddd;box-shadow:0 1px 4px rgba(0,0,0,.06)}
         .stats b{color:#2D6A4F}
 
-        .cat-div{display:flex;align-items:center;gap:12px;padding:20px 0 12px}
-        .cat-div-line{flex:1;height:1px;background:#E0DCD4}
-        .cat-div-text{font-size:.72rem;font-weight:700;color:#B5AFA8;text-transform:uppercase;letter-spacing:3px;white-space:nowrap}
+        .cat-div{display:flex;align-items:center;gap:12px;padding:24px 0 14px}
+        .cat-div-line{flex:1;height:2px;border-radius:2px}
+        .cat-div-text{font-size:.85rem;font-weight:800;text-transform:uppercase;letter-spacing:3px;white-space:nowrap}
+
+        /* Colores y tipografía por categoría */
+        .cat-div-text.cat-resinas{color:#7B1FA2;font-family:'Playfair Display',serif;letter-spacing:4px}
+        .cat-div-line.cat-resinas{background:#CE93D8}
+        .cat-div-text.cat-adhesivos{color:#1565C0;font-family:'Oswald',sans-serif;letter-spacing:3px}
+        .cat-div-line.cat-adhesivos{background:#90CAF9}
+        .cat-div-text.cat-acabado{color:#E65100;font-family:'Bebas Neue',sans-serif;letter-spacing:5px;font-size:1rem}
+        .cat-div-line.cat-acabado{background:#FFCC80}
+        .cat-div-text.cat-cementacion{color:#2E7D32;font-family:'Oswald',sans-serif;letter-spacing:3px}
+        .cat-div-line.cat-cementacion{background:#A5D6A7}
+        .cat-div-text.cat-protesis{color:#AD1457;font-family:'Playfair Display',serif;letter-spacing:3px}
+        .cat-div-line.cat-protesis{background:#F48FB1}
+        .cat-div-text.cat-ortodoncia{color:#283593;font-family:'Bebas Neue',sans-serif;letter-spacing:5px;font-size:1rem}
+        .cat-div-line.cat-ortodoncia{background:#9FA8DA}
+        .cat-div-text.cat-instrumental{color:#4E342E;font-family:'Oswald',sans-serif;letter-spacing:3px}
+        .cat-div-line.cat-instrumental{background:#BCAAA4}
+
+        /* Tipografía y color por marca en el header */
+        .brand-title{font-size:1.6rem;white-space:nowrap;text-align:center;flex-shrink:0}
+        .brand-title.bt-fgm{color:#C62828;font-family:'Inter',sans-serif;font-weight:900;font-style:italic;letter-spacing:1px}
+        .brand-title.bt-ultradent{color:#0D47A1;font-family:'Inter',sans-serif;font-weight:800;letter-spacing:3px;text-transform:uppercase}
+        .brand-title.bt-vigodent{color:#1B5E20;font-family:'Inter',sans-serif;font-weight:700;letter-spacing:2px}
+        .brand-title.bt-tokuyama{color:#1A237E;font-family:'Playfair Display',serif;font-weight:800;letter-spacing:2px}
+        .brand-title.bt-bisco{color:#B71C1C;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:4px;text-transform:uppercase}
+        .brand-title.bt-solventum{color:#4A148C;font-family:'Inter',sans-serif;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+        .brand-title.bt-micerium{color:#1B5E20;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;letter-spacing:1px}
+        .brand-title.bt-angelus{color:#BF360C;font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:4px}
+        .brand-title.bt-maquira{color:#01579B;font-family:'Inter',sans-serif;font-weight:800;letter-spacing:2px}
+        .brand-title.bt-eve{color:#004D40;font-family:'Inter',sans-serif;font-weight:900;letter-spacing:4px;text-transform:uppercase}
+        .brand-title.bt-generic{color:#5D4037;font-family:'Inter',sans-serif;font-weight:700;letter-spacing:2px}
+
+        .brand-line{flex:1;height:2px;border-radius:2px}
+        .brand-line.bt-fgm{background:#EF9A9A}
+        .brand-line.bt-ultradent{background:#90CAF9}
+        .brand-line.bt-vigodent{background:#A5D6A7}
+        .brand-line.bt-tokuyama{background:#9FA8DA}
+        .brand-line.bt-bisco{background:#EF9A9A}
+        .brand-line.bt-solventum{background:#CE93D8}
+        .brand-line.bt-micerium{background:#A5D6A7}
+        .brand-line.bt-angelus{background:#FFAB91}
+        .brand-line.bt-maquira{background:#81D4FA}
+        .brand-line.bt-eve{background:#80CBC4}
+        .brand-line.bt-generic{background:#D7CCC8}
 
         .container{max-width:800px;margin:0 auto;padding:0 16px 60px}
         .product-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
@@ -129,7 +173,7 @@
         </div>
         <div class="lp-datos">
             <div class="lp-dato"><span>2</span><small>Tiendas</small></div>
-            <div class="lp-dato"><span id="totalProductosLanding">+16</span><small>Productos</small></div>
+            <div class="lp-dato"><span id="totalProductosLanding">+0</span><small>Productos</small></div>
             <div class="lp-dato"><span>24h</span><small>Atención</small></div>
         </div>
         <p class="lp-ubicacion">La Habana · Holguín · Cuba</p>
@@ -192,6 +236,33 @@
             if(u.indexOf('MAQUIRA')>=0)return 'Maquira';
             if(u.indexOf('BISCO')>=0)return 'Bisco';
             return b;
+        }
+
+        function brandClass(brand){
+            var b=(brand||'').toLowerCase();
+            if(b.indexOf('fgm')>=0)return 'bt-fgm';
+            if(b.indexOf('ultradent')>=0)return 'bt-ultradent';
+            if(b.indexOf('vigodent')>=0)return 'bt-vigodent';
+            if(b.indexOf('tokuyama')>=0)return 'bt-tokuyama';
+            if(b.indexOf('bisco')>=0)return 'bt-bisco';
+            if(b.indexOf('solventum')>=0)return 'bt-solventum';
+            if(b.indexOf('micerium')>=0)return 'bt-micerium';
+            if(b.indexOf('angelus')>=0)return 'bt-angelus';
+            if(b.indexOf('maquira')>=0)return 'bt-maquira';
+            if(b.indexOf('eve')>=0)return 'bt-eve';
+            return 'bt-generic';
+        }
+
+        function catClass(cat){
+            var c=(cat||'').toLowerCase();
+            if(c.indexOf('resina')>=0)return 'cat-resinas';
+            if(c.indexOf('adhesiv')>=0)return 'cat-adhesivos';
+            if(c.indexOf('acabado')>=0||c.indexOf('pulido')>=0||c.indexOf('brillo')>=0)return 'cat-acabado';
+            if(c.indexOf('cement')>=0)return 'cat-cementacion';
+            if(c.indexOf('prótesis')>=0||c.indexOf('protesis')>=0||c.indexOf('rehabilit')>=0||c.indexOf('blanque')>=0)return 'cat-protesis';
+            if(c.indexOf('ortodoncia')>=0)return 'cat-ortodoncia';
+            if(c.indexOf('instrumental')>=0||c.indexOf('modelado')>=0)return 'cat-instrumental';
+            return 'cat-resinas';
         }
 
         function parseCSVFull(texto) {
@@ -480,7 +551,12 @@
 
             if (curBrand !== 'todos') {
                 filteredProducts.sort(function(a, b) { return a.nombre.localeCompare(b.nombre); });
-                html += '<div class="cat-div"><div class="cat-div-line"></div><div class="cat-div-text">' + esc(curBrand) + '</div><div class="cat-div-line"></div></div>';
+                var bCls = brandClass(curBrand);
+                html += '<div class="cat-div">';
+                html += '<div class="brand-line ' + bCls + '"></div>';
+                html += '<div class="brand-title ' + bCls + '">' + esc(curBrand) + '</div>';
+                html += '<div class="brand-line ' + bCls + '"></div>';
+                html += '</div>';
                 for (var i = 0; i < filteredProducts.length; i++) {
                     html += createCard(filteredProducts[i], i);
                 }
@@ -504,7 +580,12 @@
                 });
                 for (var g = 0; g < groupOrder.length; g++) {
                     var gc = groupOrder[g];
-                    html += '<div class="cat-div"><div class="cat-div-line"></div><div class="cat-div-text">' + esc(gc) + '</div><div class="cat-div-line"></div></div>';
+                    var cCls = catClass(gc);
+                    html += '<div class="cat-div">';
+                    html += '<div class="cat-div-line ' + cCls + '"></div>';
+                    html += '<div class="cat-div-text ' + cCls + '">' + esc(gc) + '</div>';
+                    html += '<div class="cat-div-line ' + cCls + '"></div>';
+                    html += '</div>';
                     for (var j = 0; j < groups[gc].length; j++) {
                         var idx = groups[gc][j];
                         html += createCard(filteredProducts[idx], idx);
